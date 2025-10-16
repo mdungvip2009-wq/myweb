@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Icons Demo - CSS Buy & Sell Logos</title>
+    <link rel="stylesheet" href="css/trading-icons.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0b1320 0%, #1a2332 50%, #0f1b2b 100%);
+            color: #eaf2ff;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2dd4bf;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .section {
+            background: rgba(15, 31, 53, 0.8);
+            border: 1px solid #183558;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .section h2 {
+            color: #ff8c42;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .icon-demo {
+            background: rgba(10, 26, 45, 0.6);
+            border: 1px solid #1d334f;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .icon-demo h3 {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            color: #9aa3ab;
+        }
+        
+        .icon-showcase {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            min-height: 60px;
+        }
+        
+        .code-snippet {
+            background: #0a1223;
+            border: 1px solid #1d334f;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #34c759;
+            overflow-x: auto;
+        }
+        
+        .button-demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .usage-example {
+            background: #0a1223;
+            border: 1px solid #1d334f;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .usage-example h3 {
+            color: #2dd4bf;
+            margin-bottom: 15px;
+        }
+        
+        .example-code {
+            background: #091a2d;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #e2eeff;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        .color-demo {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .buy-gradient { background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%); }
+        .sell-gradient { background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Trading Icons Demo</h1>
+        
+        <!-- Basic Icons Section -->
+        <div class="section">
+            <h2>📍 Basic Arrow Icons</h2>
+            <div class="icon-grid">
+                <div class="icon-demo">
+                    <h3>Buy Icon (Small)</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon buy-icon"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon buy-icon"&gt;&lt;/div&gt;</div>
+                </div>
+                
+                <div class="icon-demo">
+                    <h3>Sell Icon (Small)</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon sell-icon"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon sell-icon"&gt;&lt;/div&gt;</div>
+                </div>
+                
+                <div class="icon-demo">
+                    <h3>Buy Icon (Large)</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon trading-icon-lg buy-icon"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon trading-icon-lg buy-icon"&gt;&lt;/div&gt;</div>
+                </div>
+                
+                <div class="icon-demo">
+                    <h3>Sell Icon (Large)</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon trading-icon-lg sell-icon"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon trading-icon-lg sell-icon"&gt;&lt;/div&gt;</div>
+                </div>
+                
+                <div class="icon-demo">
+                    <h3>Buy Icon (Extra Large)</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon trading-icon-xl buy-icon"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon trading-icon-xl buy-icon"&gt;&lt;/div&gt;</div>
+                </div>
+                
+                <div class="icon-demo">
+                    <h3>Sell Icon (Extra Large)</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon trading-icon-xl sell-icon"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon trading-icon-xl sell-icon"&gt;&lt;/div&gt;</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Text-based Icons Section -->
+        <div class="section">
+            <h2>📝 Text-based Icons</h2>
+            <div class="icon-grid">
+                <div class="icon-demo">
+                    <h3>Buy Text Icon</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon buy-icon-text"></div>
+                        <div class="trading-icon trading-icon-lg buy-icon-text"></div>
+                        <div class="trading-icon trading-icon-xl buy-icon-text"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon buy-icon-text"&gt;&lt;/div&gt;</div>
+                </div>
+                
+                <div class="icon-demo">
+                    <h3>Sell Text Icon</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon sell-icon-text"></div>
+                        <div class="trading-icon trading-icon-lg sell-icon-text"></div>
+                        <div class="trading-icon trading-icon-xl sell-icon-text"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon sell-icon-text"&gt;&lt;/div&gt;</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Animated Icons Section -->
+        <div class="section">
+            <h2>✨ Animated Icons</h2>
+            <div class="icon-grid">
+                <div class="icon-demo">
+                    <h3>Pulsing Buy Icon</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon trading-icon-lg buy-icon pulse-buy"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon trading-icon-lg buy-icon pulse-buy"&gt;&lt;/div&gt;</div>
+                </div>
+                
+                <div class="icon-demo">
+                    <h3>Pulsing Sell Icon</h3>
+                    <div class="icon-showcase">
+                        <div class="trading-icon trading-icon-lg sell-icon pulse-sell"></div>
+                    </div>
+                    <div class="code-snippet">&lt;div class="trading-icon trading-icon-lg sell-icon pulse-sell"&gt;&lt;/div&gt;</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button Integration Section -->
+        <div class="section">
+            <h2>🔘 Button Integration</h2>
+            <div class="button-demo">
+                <button class="btn-with-icon btn-buy">
+                    <div class="trading-icon buy-icon"></div>
+                    MUA
+                </button>
+                
+                <button class="btn-with-icon btn-sell">
+                    <div class="trading-icon sell-icon"></div>
+                    BÁN
+                </button>
+                
+                <button class="btn-with-icon btn-buy">
+                    <div class="trading-icon buy-icon-text"></div>
+                    BUY NOW
+                </button>
+                
+                <button class="btn-with-icon btn-sell">
+                    <div class="trading-icon sell-icon-text"></div>
+                    SELL NOW
+                </button>
+            </div>
+            
+            <div class="usage-example">
+                <h3>Button HTML Example:</h3>
+                <div class="example-code">&lt;button class="btn-with-icon btn-buy"&gt;
+    &lt;div class="trading-icon buy-icon"&gt;&lt;/div&gt;
+    MUA
+&lt;/button&gt;
+
+&lt;button class="btn-with-icon btn-sell"&gt;
+    &lt;div class="trading-icon sell-icon"&gt;&lt;/div&gt;
+    BÁN
+&lt;/button&gt;</div>
+            </div>
+        </div>
+        
+        <!-- Color Scheme Section -->
+        <div class="section">
+            <h2>🎨 Color Schemes</h2>
+            <div class="color-demo">
+                <div class="color-swatch buy-gradient"></div>
+                <span><strong>Buy Colors:</strong> Green gradient (#22c55e → #16a34a → #15803d)</span>
+            </div>
+            <div class="color-demo">
+                <div class="color-swatch sell-gradient"></div>
+                <span><strong>Sell Colors:</strong> Red gradient (#ef4444 → #dc2626 → #b91c1c)</span>
+            </div>
+        </div>
+        
+        <!-- Usage Instructions -->
+        <div class="section">
+            <h2>📖 Usage Instructions</h2>
+            <div class="usage-example">
+                <h3>1. Include the CSS file:</h3>
+                <div class="example-code">&lt;link rel="stylesheet" href="static/css/trading-icons.css"&gt;</div>
+            </div>
+            
+            <div class="usage-example">
+                <h3>2. Use in your HTML:</h3>
+                <div class="example-code">&lt;!-- Basic arrow icons --&gt;
+&lt;div class="trading-icon buy-icon"&gt;&lt;/div&gt;
+&lt;div class="trading-icon sell-icon"&gt;&lt;/div&gt;
+
+&lt;!-- Text-based icons --&gt;
+&lt;div class="trading-icon buy-icon-text"&gt;&lt;/div&gt;
+&lt;div class="trading-icon sell-icon-text"&gt;&lt;/div&gt;
+
+&lt;!-- Different sizes --&gt;
+&lt;div class="trading-icon trading-icon-lg buy-icon"&gt;&lt;/div&gt;
+&lt;div class="trading-icon trading-icon-xl sell-icon"&gt;&lt;/div&gt;
+
+&lt;!-- With animations --&gt;
+&lt;div class="trading-icon buy-icon pulse-buy"&gt;&lt;/div&gt;
+&lt;div class="trading-icon sell-icon pulse-sell"&gt;&lt;/div&gt;</div>
+            </div>
+            
+            <div class="usage-example">
+                <h3>3. Available Classes:</h3>
+                <div class="example-code">Base: .trading-icon
+Types: .buy-icon, .sell-icon, .buy-icon-text, .sell-icon-text
+Sizes: .trading-icon-lg, .trading-icon-xl
+Effects: .pulse-buy, .pulse-sell
+Buttons: .btn-with-icon, .btn-buy, .btn-sell</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

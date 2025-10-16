@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no" />
+<title>Bảng Điều Khiển — BO Helper</title>
+<style>
+:root{
+  --bg:#0b1320; --bg2:#0a1223;
+  --card:#0f1f35; --card2:#102645;
+  --accent:#2dd4bf; --brand:#34c759; --sell:#ff4d4f;
+  --muted:#9aa3ab; --text:#eaf2ff; --text-soft:#cfe0ff;
+  --line:#183558; --radius:16px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:linear-gradient(180deg,var(--bg),var(--bg2));
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated 3D background particles */
+body::before{content:'';position:fixed;inset:0;background-image:
+  radial-gradient(circle at 15% 85%, rgba(45,212,191,.12) 0%, transparent 50%),
+  radial-gradient(circle at 85% 15%, rgba(52,199,89,.08) 0%, transparent 50%),
+  radial-gradient(circle at 50% 50%, rgba(255,140,66,.06) 0%, transparent 50%),
+  radial-gradient(circle at 25% 25%, rgba(255,77,79,.04) 0%, transparent 50%);
+  animation:floatingParticles3D 40s ease-in-out infinite;pointer-events:none;z-index:0}
+@keyframes floatingParticles3D{0%,100%{transform:translate(0) rotate(0) scale(1);filter:blur(0)}25%{transform:translate(15px,-30px) rotate(2deg) scale(1.05);filter:blur(.5px)}50%{transform:translate(-20px,25px) rotate(-1.5deg) scale(.95);filter:blur(1px)}75%{transform:translate(10px,-15px) rotate(1deg) scale(1.02);filter:blur(.3px)}}
+body::after{content:'';position:fixed;top:20%;right:10%;width:200px;height:200px;background:radial-gradient(circle at 30% 30%, rgba(45,212,191,.15), rgba(45,212,191,.05), transparent);border-radius:50%;animation:float3D 20s ease-in-out infinite;pointer-events:none;z-index:0}
+@keyframes float3D{0%,100%{transform:translateY(0) scale(1) rotateX(0);opacity:.6}50%{transform:translateY(-40px) scale(1.1) rotateX(180deg);opacity:.8}}
+
+.hidden{display:none!important}
+.noscroll{overflow:hidden}
+
+/* ===== HEADER ===== */
+.main-header{
+  position:fixed; top:0; left:0; right:0; height:56px;
+  background:var(--bg); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 14px; z-index:200;
+}
+.wrap{max-width:560px;margin:12px auto 84px;padding:56px 14px 0;position:relative;z-index:1;perspective:1000px}
+.icon-btn{position:relative;width:34px;height:34px;border:none;background:#1a2a40;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 0}
+.icon-btn span{display:block;width:20px;height:2px;background:#fff;border-radius:2px}
+.header-user-info{display:flex;align-items:center;gap:12px}
+.balance-item{display:flex;align-items:center;gap:8px;background:var(--card);padding:8px 12px;border-radius:12px;border:1px solid var(--line)}
+.wallet-icon{width:20px;height:20px;color:var(--muted)}
+.balance-value{font-size:14px;font-weight:700;color:var(--text)}
+.balance-label{font-size:11px;color:var(--muted);margin-top:-2px}
+.user-profile{display:flex;align-items:center}
+.avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;border:2px solid var(--line);box-sizing:border-box}
+.avatar img{width:100%;height:100%;object-fit:cover}
+
+/* Language button */
+.lang-flag{
+  width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:50%;border:2px solid var(--line);overflow:hidden;box-sizing:border-box;
+  transition:.2s ease; background:#213247
+}
+.lang-flag:hover{border-color:var(--accent);transform:scale(1.05)}
+.lang-flag svg{width:100%;height:100%;display:block;pointer-events:none}
+.lang-menu{position:absolute;top:34px;right:0;background:#223149;border:1px solid #2a3f5e;border-radius:12px;padding:8px 10px;box-shadow:0 10px 25px rgba(0,0,0,.35);display:none;z-index:300}
+.lang-menu.show{display:block}
+
+/* ===== Sidebar ===== */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:140}
+.backdrop.show{opacity:1;pointer-events:auto}
+
+.sidebar{
+  position:fixed; top:0; left:0; height:100dvh; width:84vw; max-width:320px;
+  background:#0f1b2b; border-right:1px solid #173152;
+  transform:translateX(-100%); transition:transform .25s ease;
+  z-index:145; display:flex; flex-direction:column; gap:12px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 14px 18px;
+}
+.sidebar.show{transform:translateX(0)}
+.menu-item{
+  display:flex; align-items:center; gap:8px;
+  width:100%; padding:12px 14px; border-radius:14px;
+  background:#213247; color:#e8f2ff; font-weight:800; text-decoration:none; border:1px solid #2a3f5e
+}
+.menu-item.active{outline:2px solid rgba(45,212,191,.35)}
+.menu-logout{background:#2a3b54; color:#ffd9d9}
+
+/* Sidebar footer */
+.sidebar-footer{
+  margin-top:auto;
+  background:#1b2a40;
+  border:1px solid #2a3f5e;
+  border-radius:12px;
+  padding:8px;
+  color:#cfe0ff;
+  text-align:center;
+  max-width:180px;
+  margin-left:auto;
+  margin-right:auto;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.sidebar-footer .footer-title{
+  font-weight:700;font-size:10px;margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase;color:#9fb7d9
+}
+.sidebar-footer .footer-logo{
+  display:flex;align-items:center;justify-content:center;background:#12233a;border:1px solid #2a3f5e;border-radius:10px;padding:8px
+}
+.sidebar-footer .footer-logo img{
+  width:120px;height:48px;object-fit:contain;background:#0f1f35;border-radius:8px;filter:drop-shadow(0 0 12px rgba(45,212,191,.35))
+}
+
+/* Avatar dropdown */
+.user-profile{position:relative;cursor:pointer}
+.user-menu{position:absolute;top:calc(100% + 8px);right:0;background:#223149;border:1px solid #2a3f5e;border-radius:12px;padding:12px;min-width:220px;box-shadow:0 10px 25px rgba(0,0,0,.35);display:none;z-index:220}
+.user-menu.show{display:block}
+.user-menu-header{padding:8px 0;border-bottom:1px solid #2a3f5e;margin-bottom:8px}
+.user-menu-name{font-size:14px;font-weight:700;color:#e8f2ff;margin-bottom:4px}
+.user-menu-email{font-size:12px;color:#9aa3ab}
+.user-menu-item{display:block;width:100%;text-align:left;background:transparent;border:none;color:#e8f2ff;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s ease}
+.user-menu-item:hover{background:#2a3b54}
+.user-menu-item.logout{color:#ff6b6b;margin-top:4px;border-top:1px solid #2a3f5e;padding-top:12px}
+
+/* ===== Dashboard ===== */
+.dashboard-title{color:#ff8c42;font-size:28px;font-weight:900;text-align:left;margin:0 0 20px;background:linear-gradient(135deg,#ff8c42,#ffa726);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:titleGlow 3s ease-in-out infinite alternate;text-shadow:0 0 20px rgba(255,140,66,.3);position:relative}
+@keyframes titleGlow{0%{filter:brightness(1) drop-shadow(0 0 5px rgba(255,140,66,.3))}100%{filter:brightness(1.2) drop-shadow(0 0 15px rgba(255,140,66,.6))}}
+.stats-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:24px}
+.stat-card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:20px;padding:20px;position:relative;overflow:hidden;backdrop-filter:blur(15px);transition:all .4s cubic-bezier(.4,0,.2,1)}
+.stat-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.stat-icon{width:28px;height:28px;color:var(--accent)}
+.stat-label{font-size:13px;color:var(--muted);font-weight:700}
+.stat-value{font-size:20px;font-weight:900;color:var(--text);margin:8px 0}
+.stat-change{font-size:12px;font-weight:700}
+.stat-change.positive{color:#34c759}
+.profit-card{grid-column:1/-1;background:linear-gradient(135deg,#0d2749,#1a365d,#2a5a7a);border:2px solid #2a5a7a;border-radius:24px;padding:24px;margin-bottom:24px;position:relative;overflow:hidden}
+.profit-header{text-align:center;margin-bottom:20px}
+.profit-title{font-size:16px;color:#9aa3ab;margin-bottom:12px;font-weight:600}
+.profit-amount{font-size:42px;font-weight:900;color:#2dd4bf;display:flex;align-items:center;justify-content:center;gap:12px}
+.profit-chart{width:140px;height:70px;margin:0 auto}
+.summary-section{margin-bottom:24px}
+.section-title{font-size:18px;font-weight:900;margin-bottom:16px;color:var(--text);position:relative}
+.section-title::after{content:'';position:absolute;bottom:-4px;left:0;width:40px;height:3px;background:linear-gradient(90deg,var(--accent),transparent);border-radius:2px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.summary-item{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:16px;padding:16px 12px;text-align:center}
+.summary-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.summary-value{font-size:18px;font-weight:900;color:var(--text)}
+.summary-ratio{font-size:12px;margin-top:4px;font-weight:700}
+.summary-ratio.win{color:#34c759}
+.summary-ratio.lose{color:#ff4d4f}
+
+/* ===== TOP PACKAGES (NEW) ===== */
+.packs{
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+  margin-bottom:22px;
+}
+.packs-title{
+  font-size:20px;font-weight:900;margin-bottom:12px;color:#ff5252;
+  display:flex;align-items:center;gap:8px
+}
+.packs-title .spark{font-size:18px}
+.packs-row{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  padding:6px 2px 12px;
+  scroll-snap-type:x mandatory
+}
+.packs-row::-webkit-scrollbar{height:8px}
+.packs-row::-webkit-scrollbar-thumb{background:#20334b;border-radius:8px}
+.pack-card{
+  scroll-snap-align:start;
+  min-width:240px;max-width:260px;flex:0 0 auto;
+  background:linear-gradient(160deg,rgba(29,36,51,.95) 0%,rgba(15,31,53,.92) 100%);
+  border:1px solid #22324a;border-radius:18px;padding:18px 16px 16px;
+  position:relative;overflow:visible;z-index:0;
+  box-shadow:0 14px 32px rgba(10,20,38,.55);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.pack-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(45,212,191,.05) 0%,rgba(59,130,246,.05) 45%,rgba(191,219,254,.05) 100%);
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:0;
+}
+.pack-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 22px 38px rgba(10,20,38,.65);
+}
+.pack-card.rank1{
+  background:linear-gradient(160deg,rgba(255,215,0,.95) 0%,rgba(255,150,0,.88) 60%,rgba(255,120,0,.82) 100%);
+  color:#132c45
+}
+.pack-card.rank2{
+  background:linear-gradient(160deg,rgba(229,233,255,.95) 0%,rgba(186,199,255,.92) 60%,rgba(149,172,255,.85) 100%);
+  color:#132c45
+}
+.pack-card.rank3{
+  background:linear-gradient(160deg,rgba(125,230,195,.94) 0%,rgba(72,199,170,.9) 55%,rgba(34,153,126,.85) 100%)
+}
+.pack-card.rank1::after,
+.pack-card.rank2::after,
+.pack-card.rank3::after{
+  background:linear-gradient(135deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.12) 45%,rgba(255,255,255,.05) 100%)
+}
+.pack-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;position:relative;z-index:1}
+.pack-name{font-weight:900;font-size:14px;line-height:1.35}
+.pack-pnl{font-size:12px;color:#9bd3a9;font-weight:700}
+.pack-card.rank1 .pack-pnl,
+.pack-card.rank2 .pack-pnl{color:#136c3f}
+.pack-amount{font-size:28px;font-weight:900;margin:12px 0;position:relative;z-index:1}
+.pack-btn{
+  height:38px;border:0;border-radius:12px;padding:0 12px;font-weight:900;cursor:pointer;
+  background:#2a3b54;color:#fff;position:relative;z-index:1
+}
+.pack-btn.copy{background:#d33b3b}
+.badge{
+  position:absolute;top:-18px;left:20px;width:62px;height:62px;
+  display:flex;align-items:center;justify-content:center;
+  z-index:2;
+}
+.badge img{
+  width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))
+}
+.badge span{
+  display:flex;align-items:center;justify-content:center;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(9,20,36,.85);
+  border:1px solid rgba(255,255,255,.25);
+  font-weight:800;font-size:18px;color:#eaf2ff;
+  box-shadow:0 8px 18px rgba(9,20,36,.65)
+}
+.pack-card.rank1 .badge span,
+.pack-card.rank2 .badge span,
+.pack-card.rank3 .badge span{
+  background:rgba(0,0,0,.3);color:#132c45
+}
+.pack-card.rank1 .badge span{border-color:rgba(255,166,0,.55)}
+.pack-card.rank2 .badge span{border-color:rgba(149,172,255,.6)}
+.pack-card.rank3 .badge span{border-color:rgba(34,153,126,.55)}
+
+@media (min-width:900px){
+  .wrap{max-width:1080px;padding-left:32px;padding-right:32px}
+  .packs-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+    overflow:visible;
+    scroll-snap-type:none;
+    padding:0;
+  }
+  .pack-card{min-width:0;max-width:none}
+}
+
+/* Responsive */
+@media (max-width:420px){
+  .balance-label{display:none}
+  .balance-value{font-size:13px}
+  .header-user-info{gap:8px}
+  .dashboard-title{font-size:24px}
+  .stat-value{font-size:16px}
+  .profit-amount{font-size:30px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="main-header">
+  <button class="icon-btn" id="btn-menu" aria-label="Mở menu" aria-controls="sidebar" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="header-user-info">
+    <div class="header-controls" aria-label="Chọn ngôn ngữ" style="position:relative">
+      <span class="lang-flag" id="lang-toggle" title="Chọn ngôn ngữ">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
+          <g fill-rule="nonzero">
+            <circle cx="256" cy="256" r="256" fill="#da251d"/>
+            <path d="M252.3 294.6l51.2 37.2-19.6-60.3 51.3-37.2h-63.4l-19.6-60.3-19.6 60.3H169.3l51.3 37.2-19.6 60.3z" fill="#ff0"/>
+          </g>
+        </svg>
+      </span>
+      <div class="lang-menu" id="lang-menu" role="menu">
+        <button type="button" data-lang="en" style="display:block;width:160px;text-align:left;background:transparent;border:none;color:#e8f2ff;padding:8px 10px;border-radius:8px;cursor:pointer">Tiếng Anh</button>
+        <button type="button" data-lang="vn" style="display:block;width:160px;text-align:left;background:transparent;border:none;color:#e8f2ff;padding:8px 10px;border-radius:8px;cursor:pointer">Tiếng Việt</button>
+      </div>
+    </div>
+    <div class="balance-item">
+      <div>
+        <div class="balance-value">$<span id="real-balance">0</span></div>
+        <div class="balance-label">TK Thực</div>
+      </div>
+    </div>
+    <div class="balance-item">
+      <div>
+        <div class="balance-value">$<span id="demo-balance">0</span></div>
+        <div class="balance-label">TK Demo</div>
+      </div>
+    </div>
+    <div class="user-profile balance-item" id="user-profile">
+      <div class="avatar">
+        <img src="https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg" alt="Avatar">
+      </div>
+      <div class="user-menu" id="user-menu">
+        <div class="user-menu-header">
+          <div class="user-menu-name" id="user-name">Loading...</div>
+          <div class="user-menu-email" id="user-email">Loading...</div>
+        </div>
+        <button type="button" class="user-menu-item logout" id="btn-logout-menu">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Sidebar ===== -->
+<div id="backdrop" class="backdrop" aria-hidden="true"></div>
+<nav class="sidebar" id="sidebar" aria-label="Menu">
+  <a href="/" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg> Bảng Điều Khiển
+  </a>
+  <a href="/aidudoan" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+    </svg> AI Dự Đoán
+  </a>
+  <a href="/copytrade" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    </svg> Copytrade
+  </a>
+  <a href="/investment" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M21 11v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-8m18 0-9-9-9 9m18 0H3m15-3V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4"/>
+    </svg> Gói đầu tư
+  </a>
+  <a href="/top-expert" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg> Top Chuyên Gia
+  </a>
+  <a href="/vip" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M12 2l-3 7h-7l5.5 4-2.5 7 7-4 7 4-2.5-7 5.5-4h-7z"/>
+    </svg> Thành viên VIP
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="footer-title">Tài khoản liên kết</div>
+    <div class="footer-logo">
+      <img src="https://fintech3.net/static/media/logo.8490529fc9b2fd89a0ad.png" alt="Linked account logo">
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE ===== -->
+<div class="wrap">
+  <!-- NEW: Top packages section -->
+  <div class="packs" id="packs">
+    <div class="packs-title">Gói hiệu quả hàng đầu <span class="spark">✨</span></div>
+    <div class="packs-row" id="packs-row">
+      <!-- cards injected by JS -->
+    </div>
+  </div>
+
+  <div class="dashboard-title">Lịch Sử KLGD & Lợi Nhuận</div>
+
+  <div class="profit-card">
+    <div class="profit-header">
+      <div class="profit-title">Lợi nhuận hôm nay</div>
+      <div class="profit-amount">
+        <span>+$</span><span id="total-profit">0</span>
+        <svg class="profit-chart" viewBox="0 0 120 60">
+          <path d="M10,50 Q30,20 50,30 T90,25 T110,15" stroke="#2dd4bf" stroke-width="2" fill="none"/>
+          <circle cx="110" cy="15" r="3" fill="#2dd4bf"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2z"/></svg>
+        <span class="stat-label">Khối lượng / Số giao dịch</span>
+      </div>
+      <div class="stat-value">
+        <span id="total-trades">0</span> $ / <span id="trade-count">0</span> lệnh
+      </div>
+      <div class="stat-change positive">
+        T.L Win: <span id="win-rate">0%</span> (<span id="win-count-inline">0</span> win)
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <div class="section-title">Chi tiết giao dịch</div>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-label">Win</div>
+        <div class="summary-value" id="win-count">0</div>
+        <div class="summary-ratio win" id="win-ratio">0%</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Lose</div>
+        <div class="summary-value" id="lose-count">0</div>
+        <div class="summary-ratio lose" id="lose-ratio">0%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const token = localStorage.getItem('token') || params.get('token');
+if(!token){ location.replace('/login'); } else { localStorage.setItem('token', token); }
+
+function redirectToLogin(){ localStorage.removeItem('token'); sessionStorage.clear(); location.replace('/login'); }
+async function authFetch(url,opt={}){ const r = await fetch(url,opt); if(r.status===401){ redirectToLogin(); throw new Error('401'); } return r; }
+
+let currentUserId = null;
+
+async function loadProfile(){
+  try{
+    const r = await authFetch('/api/user/getProfile',{ method:'POST', headers:{'Authorization':'Bearer '+token} });
+    const js = await r.json();
+    if(js.status && js.data){
+      document.getElementById('real-balance').textContent = (js.data.balance||0).toLocaleString();
+      document.getElementById('demo-balance').textContent = (js.data.demoBalance||0).toLocaleString();
+      currentUserId = js.data.id || js.data.userid;
+      document.getElementById('user-name').textContent = js.data.userName || 'User';
+      document.getElementById('user-email').textContent = js.data.email || '';
+    }
+  }catch(e){ if(e.message!=='401') console.error('Profile error', e); }
+}
+
+async function fetchRangeStatistic(unixStart, unixEnd){
+  if(!currentUserId) return null;
+  try{
+    const r = await authFetch('https://fintech3.net/api/binaryOption/dayStatisticsOrderToTime',{
+      method:'POST',
+      headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token },
+      body: JSON.stringify({ type:'live', userid: currentUserId, timeStart: String(unixStart), timeEnd: String(unixEnd) })
+    });
+    const js = await r.json();
+    if(js.status && js.data) return js.data;
+  }catch(e){ console.error('fetchRangeStatistic fail', e); }
+  return null;
+}
+
+function money(n){ const num = Number(n) || 0; return num % 1 === 0 ? num.toString() : num.toFixed(2); }
+
+/* ===== TOP PACKAGES ===== */
+function formatUsd(x){ return '$' + (Number(x||0)).toLocaleString('en-US'); }
+function renderPacks(items){
+  const row = document.getElementById('packs-row');
+  row.innerHTML='';
+  if(!Array.isArray(items) || items.length===0){
+    row.innerHTML = '<div class="small" style="opacity:.7">Chưa có dữ liệu.</div>';
+    return;
+  }
+  items.forEach((p, i)=>{
+    const rank = p.rank ?? (i+1);
+    const card = document.createElement('div');
+    card.className = 'pack-card' + (rank<=3?` rank${rank}`:'');
+    const badge = rank<=3
+      ? `<img src="/media/rank-${rank}.png" alt="Hang ${rank}">`
+      : `<span>${rank}</span>`;
+    card.innerHTML = `
+      <div class="badge">${badge}</div>
+      <div class="pack-head">
+        <div class="pack-name">${(p.name||'Gói không tên')}</div>
+        <div class="pack-pnl">PnL 24h <span style="color:#34c759">(+${p.pnl24||0}%)</span></div>
+      </div>
+      <div class="pack-amount">${formatUsd(p.amount||0)}</div>
+      <button class="pack-btn ${p.private? '' : 'copy'}" data-id="${p.id||''}" data-private="${p.private?1:0}">
+        ${p.private? 'Gói riêng tư' : 'Sao chép gói'}
+      </button>
+    `;
+    row.appendChild(card);
+  });
+}
+async function loadTopPackages(){
+  try{
+    // đổi endpoint này theo backend của bạn nếu khác
+    const r = await authFetch('/api/investment/top', { headers:{'Authorization':'Bearer '+token} });
+    const js = await r.json();
+    if(js && (js.ok || js.status) && Array.isArray(js.data)){
+      renderPacks(js.data);
+      return;
+    }
+  }catch(e){ /* fallback demo */ }
+  renderPacks([
+    {id:'p1', rank:1, name:'Tele: hoangduy995', pnl24:95, amount:2850, private:true},
+    {id:'p2', rank:2, name:'TL: @bot_minhtam', pnl24:95, amount:1900, private:true},
+    {id:'p3', rank:3, name:'Mê cung không lối thoát', pnl24:95, amount:475, private:false},
+    {id:'p4', rank:4, name:'Ko win ko phải F Hoàng Duy', pnl24:95, amount:475, private:false},
+    {id:'p5', rank:5, name:'Đường dài mới biết ngựa...', pnl24:95, amount:475, private:false}
+  ]);
+}
+document.addEventListener('click', async (e)=>{
+  const btn = e.target.closest('.pack-btn');
+  if(!btn) return;
+  const isPrivate = btn.getAttribute('data-private')==='1';
+  if(isPrivate){ return alert('Gói riêng tư'); }
+  const id = btn.getAttribute('data-id');
+  try{
+    const r = await authFetch('/api/investment/copy', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({ packageId: id })
+    });
+    const j = await r.json().catch(()=> ({}));
+    alert(j?.ok ? 'Đã sao chép gói.' : 'Không thể sao chép gói.');
+  }catch{
+    alert('Lỗi kết nối máy chủ');
+  }
+});
+
+/* ===== STATS ===== */
+async function loadStatisticsAllTime(){
+  if(!currentUserId) return;
+  const start = 1609459200;
+  const end   = Math.floor(Date.now()/1000);
+  const data  = await fetchRangeStatistic(start, end);
+  if(!data) return;
+
+  const after  = parseFloat(data.afterBalance || 0);
+  const before = parseFloat(data.beforeBalance || 0);
+  const profit = after - before;
+  document.getElementById('total-profit').textContent = (Number.isFinite(profit) ? money(profit) : '0');
+
+  const winCount  = parseInt(data.totalWin)  || 0;
+  const loseCount = parseInt(data.totalLose) || 0;
+  const tradeCount = winCount + loseCount;
+  const tradingAmount = parseFloat(data.totalOrder) || 0;
+
+  document.getElementById('total-trades').textContent = money(tradingAmount);
+  document.getElementById('trade-count').textContent  = tradeCount.toString();
+
+  const denom   = tradeCount;
+  const winRate = denom > 0 ? ((winCount / denom) * 100).toFixed(1) : '0';
+  const loseRate = denom > 0 ? ((loseCount / denom) * 100).toFixed(1) : '0';
+
+  document.getElementById('win-rate').textContent = winRate + '%';
+  document.getElementById('win-count-inline').textContent = winCount;
+  document.getElementById('win-count').textContent  = winCount;
+  document.getElementById('lose-count').textContent = loseCount;
+  document.getElementById('win-ratio').textContent  = winRate + '%';
+  document.getElementById('lose-ratio').textContent = loseRate + '%';
+}
+
+/* Sidebar open/close */
+const body=document.body, sidebar=document.getElementById('sidebar'), backdrop=document.getElementById('backdrop'), btnMenu=document.getElementById('btn-menu');
+function openMenu(){ sidebar.classList.add('show'); backdrop.classList.add('show'); body.classList.add('noscroll'); btnMenu.setAttribute('aria-expanded','true'); backdrop.setAttribute('aria-hidden','false'); }
+function closeMenu(){ sidebar.classList.remove('show'); backdrop.classList.remove('show'); body.classList.remove('noscroll'); btnMenu.setAttribute('aria-expanded','false'); backdrop.setAttribute('aria-hidden','true'); }
+btnMenu.addEventListener('click', ()=>{ sidebar.classList.contains('show') ? closeMenu() : openMenu() });
+backdrop.addEventListener('click', closeMenu);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMenu(); });
+
+/* User menu dropdown */
+const userProfile = document.getElementById('user-profile');
+const userMenu = document.getElementById('user-menu');
+if(userProfile){
+  userProfile.addEventListener('click', (e)=>{ e.stopPropagation(); userMenu?.classList.toggle('show'); });
+}
+document.addEventListener('click', (e)=>{ if(!e.target.closest('#user-profile')) userMenu?.classList.remove('show'); });
+
+document.getElementById('btn-logout-menu')?.addEventListener('click', async ()=>{
+  try{ await fetch('/api/logout',{method:'POST'});}catch(e){}
+  redirectToLogin();
+});
+
+(async function init(){
+  await loadProfile();
+  await loadTopPackages();          // <-- NEW
+  await loadStatisticsAllTime();
+  setInterval(loadProfile, 30000);
+})();
+</script>
+<script>
+// Fallback tiếng Việt nếu encoding lỗi
+document.addEventListener('DOMContentLoaded', function(){
+  try{
+    const t = (sel, text)=>{ const el=document.querySelector(sel); if(el) el.textContent=text; };
+    t('.dashboard-title', 'Lịch Sử - KLGD & Lợi Nhuận');
+    t('.profit-title', 'Lợi nhuận hôm nay');
+    t('#btn-logout-menu', 'Đăng xuất');
+    const bl = document.querySelectorAll('.balance-label');
+    if(bl && bl[0]) bl[0].textContent = 'TK Thực';
+    document.querySelectorAll('.lang-menu [data-lang="en"]').forEach(b=>b.textContent='Tiếng Anh');
+    document.querySelectorAll('.lang-menu [data-lang="vn"]').forEach(b=>b.textContent='Tiếng Việt');
+    t('.sidebar-footer .footer-title', 'Tài khoản liên kết');
+    function setMenuLabel(href, text){
+      const a = document.querySelector(`nav.sidebar a[href="${href}"]`);
+      if(!a) return;
+      Array.from(a.childNodes).forEach(n=>{ if(n.nodeType===Node.TEXT_NODE){ a.removeChild(n); } });
+      a.append(' ' + text);
+    }
+    setMenuLabel('/', 'Bảng điều khiển');
+    setMenuLabel('/aidudoan', 'AI Dự đoán');
+    setMenuLabel('/copytrade', 'Copytrade');
+    setMenuLabel('/investment', 'Gói đầu tư');
+    setMenuLabel('/top-expert', 'Top Chuyên Gia');
+    setMenuLabel('/vip', 'Thành viên VIP');
+  }catch(e){}
+});
+</script>
+<script src="/static/js/language-switcher.js"></script>
+</body>
+</html>

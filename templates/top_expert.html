@@ -1,0 +1,401 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no" />
+<title>Top Chuyên Gia — BO Helper</title>
+<style>
+:root{
+  --bg:#0b1320; --bg2:#0a1223;
+  --card:#0f1f35; --card2:#102645;
+  --accent:#2dd4bf; --brand:#34c759; --sell:#ff4d4f;
+  --muted:#9aa3ab; --text:#eaf2ff; --text-soft:#cfe0ff;
+  --line:#183558; --radius:16px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:linear-gradient(180deg,var(--bg),var(--bg2));
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+  position: relative; overflow-x: hidden;
+}
+
+/* Animated background particles */
+body::before{
+  content:''; position:fixed; inset:0;
+  background-image:
+    radial-gradient(circle at 30% 70%, rgba(45,212,191,.08) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(52,199,89,.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255,215,0,.05) 0%, transparent 50%);
+  animation:floatingParticles 35s ease-in-out infinite;
+  pointer-events:none; z-index:0;
+}
+@keyframes floatingParticles{
+  0%,100%{transform:translateY(0) rotate(0) scale(1)}
+  25%{transform:translateY(-25px) rotate(2deg) scale(1.03)}
+  50%{transform:translateY(20px) rotate(-1.5deg) scale(.97)}
+  75%{transform:translateY(-15px) rotate(1deg) scale(1.02)}
+}
+.hidden{display:none!important}
+.noscroll{overflow:hidden}
+
+/* ===== HEADER ===== */
+.main-header{
+  position:fixed; top:0; left:0; right:0; height:56px;
+  background:var(--bg); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 14px; z-index:200;
+}
+.icon-btn{
+  position:relative; width:34px; height:34px; border:none;
+  background:#1a2a40; border-radius:10px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 0;
+}
+.icon-btn span{display:block; width:20px; height:2px; background:#fff; border-radius:2px}
+.header-user-info{display:flex; align-items:center; gap:12px}
+.balance-item{display:flex; align-items:center; gap:8px; background:var(--card); padding:8px 12px; border-radius:12px; border:1px solid var(--line)}
+.wallet-icon{width:20px; height:20px; color:var(--muted)}
+.balance-value{font-size:14px; font-weight:700}
+.balance-label{font-size:11px; color:var(--muted); margin-top:-2px}
+
+.user-profile{display:flex; align-items:center; gap:10px; background:var(--card); padding:8px 12px; border-radius:12px; border:1px solid var(--line); position:relative; cursor:pointer}
+.avatar{width:32px; height:32px; border-radius:50%; overflow:hidden; border:2px solid var(--line)}
+.avatar img{width:100%; height:100%; object-fit:cover}
+
+.user-menu{position:absolute; top:calc(100% + 8px); right:0; background:#223149; border:1px solid #2a3f5e; border-radius:12px; padding:12px; min-width:220px; box-shadow:0 10px 25px rgba(0,0,0,.35); display:none; z-index:220}
+.user-menu.show{display:block}
+.user-menu-header{padding:8px 0; border-bottom:1px solid #2a3f5e; margin-bottom:8px}
+.user-menu-name{font-size:14px; font-weight:700; color:#e8f2ff; margin-bottom:4px}
+.user-menu-email{font-size:12px; color:#9aa3ab}
+.user-menu-item{display:block; width:100%; text-align:left; background:transparent; border:none; color:#e8f2ff; padding:10px 12px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; transition:background .2s ease}
+.user-menu-item:hover{background:#2a3b54}
+.user-menu-item.logout{color:#ff6b6b; margin-top:4px; border-top:1px solid #2a3f5e; padding-top:12px}
+
+/* Language button */
+.header-controls{position:relative}
+.lang-flag{
+  width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center;
+  cursor:pointer; border-radius:50%; border:2px solid var(--line); overflow:hidden; background:#213247;
+  transition:.2s ease;
+}
+.lang-flag:hover{border-color:var(--accent); transform:scale(1.05)}
+.lang-flag svg{width:100%; height:100%; pointer-events:none; display:block}
+.lang-menu{
+  position:absolute; top:34px; right:0; background:#223149; border:1px solid #2a3f5e; border-radius:12px; padding:8px 10px;
+  box-shadow:0 10px 25px rgba(0,0,0,.35); display:none; z-index:300
+}
+.lang-menu.show{display:block}
+
+@media (max-width:420px){
+  .balance-label{display:none}
+  .balance-value{font-size:13px}
+  .header-user-info{gap:8px}
+}
+@media (min-width:900px){
+  .wrap{max-width:1080px;padding-left:32px;padding-right:32px}
+}
+@media (min-width:768px){ .header-user-info{margin-left:auto} }
+
+/* ===== Sidebar ===== */
+.backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:140}
+.backdrop.show{opacity:1; pointer-events:auto}
+.sidebar{
+  position:fixed; top:0; left:0; height:100dvh; width:84vw; max-width:320px;
+  background:#0f1b2b; border-right:1px solid #173152;
+  transform:translateX(-100%); transition:transform .25s ease;
+  z-index:145; display:flex; flex-direction:column; gap:12px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 14px 18px;
+}
+.sidebar.show{transform:translateX(0)}
+.menu-item{
+  display:block; width:100%; padding:12px 14px; border-radius:14px;
+  background:#213247; color:#e8f2ff; font-weight:800; text-decoration:none; border:1px solid #2a3f5e
+}
+.menu-logout{background:#2a3b54; color:#ffd9d9}
+
+/* Sidebar footer (logo lớn, không chữ kèm) */
+.sidebar-footer{
+  margin-top:auto; background:#1b2a40; border:1px solid #2a3f5e; border-radius:12px;
+  padding:8px; color:#cfe0ff; text-align:center; max-width:180px; margin-left:auto; margin-right:auto;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.sidebar-footer .footer-title{font-weight:700;font-size:10px;margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase;color:#9fb7d9}
+.sidebar-footer .footer-logo{display:flex;align-items:center;justify-content:center;background:#12233a;border:1px solid #2a3f5e;border-radius:10px;padding:8px}
+.sidebar-footer .footer-logo img{height:64px;width:auto;object-fit:contain;border-radius:8px;background:#0f1f35;filter:drop-shadow(0 0 12px rgba(45,212,191,.35))}
+
+/* ===== Layout ===== */
+.wrap{max-width:560px;margin:12px auto 84px;padding:56px 14px 0;position:relative;z-index:1}
+.card{
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px; box-shadow:0 12px 40px rgba(0,0,0,.35);
+  margin-bottom:16px; position:relative; overflow:hidden; backdrop-filter:blur(10px);
+  transition:.3s cubic-bezier(.4,0,.2,1); animation:cardFadeIn .6s ease-out;
+}
+@keyframes cardFadeIn{0%{opacity:0;transform:translateY(20px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(45,212,191,.08),transparent);animation:cardShimmer 6s infinite;pointer-events:none}
+@keyframes cardShimmer{0%{left:-100%}100%{left:100%}}
+.card:hover{transform:translateY(-2px);box-shadow:0 20px 60px rgba(0,0,0,.45),0 0 0 1px rgba(45,212,191,.1);border-color:rgba(45,212,191,.3)}
+.title{font-weight:900;font-size:22px;text-align:center;margin:8px 0 10px}
+
+/* ===== Leaderboard ===== */
+.leaderboard-list{list-style:none}
+.leaderboard-item{
+  display:grid; grid-template-columns:54px 1fr auto; align-items:center;
+  gap:12px; padding:14px 18px; margin-bottom:12px; min-height:82px;
+  border-radius:16px; border:1px solid var(--line);
+  background:linear-gradient(90deg,#1e293b 60%,#0f1f35 100%); position:relative; overflow:hidden;
+}
+/* Top 1-3 styles */
+.leaderboard-item.top1{background:linear-gradient(135deg,#FFD700 0%,#FFA000 50%,#FF8F00 100%);border:2px solid #FFD700;box-shadow:0 0 20px rgba(255,215,0,.4), inset 0 1px 0 rgba(255,255,255,.3)}
+.leaderboard-item.top1::before{content:'';position:absolute;inset:0;background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,.1) 50%,transparent 70%);animation:shine 3s infinite}
+.leaderboard-item.top2{background:linear-gradient(135deg,#E8EAF6 0%,#C5CAE9 50%,#9FA8DA 100%);border:2px solid #C5CAE9;box-shadow:0 0 15px rgba(197,202,233,.3), inset 0 1px 0 rgba(255,255,255,.2)}
+.leaderboard-item.top3{background:linear-gradient(135deg,#FFCC80 0%,#FFB74D 50%,#FF8A65 100%);border:2px solid #FFB74D;box-shadow:0 0 15px rgba(255,183,77,.3), inset 0 1px 0 rgba(255,255,255,.2)}
+@keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+.leaderboard-rank{justify-self:center; font-weight:900; font-size:18px; color:#b7c3cf; position:relative; z-index:2}
+.leaderboard-rank img{width:32px;height:32px;display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.leaderboard-info{display:flex; align-items:center; gap:12px; position:relative; z-index:2}
+.leaderboard-avatar{width:40px; height:40px; border-radius:50%; overflow:hidden; background:#fff; flex:0 0 40px; position:relative; border:2px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.leaderboard-item.top1 .leaderboard-avatar{border:3px solid #FFD700; box-shadow:0 0 12px rgba(255,215,0,.5),0 2px 8px rgba(0,0,0,.2); background:linear-gradient(45deg,#FFD700,#FFA000)}
+.leaderboard-item.top1 .leaderboard-avatar::before{content:''; position:absolute; inset:-3px; border-radius:50%; background:conic-gradient(#FFD700,#FFA000,#FFD700); z-index:-1; animation:rotate 3s linear infinite}
+.leaderboard-item.top2 .leaderboard-avatar{border:3px solid #E0E0E0; box-shadow:0 0 10px rgba(224,224,224,.4),0 2px 8px rgba(0,0,0,.2); background:linear-gradient(45deg,#F5F5F5,#E0E0E0)}
+.leaderboard-item.top3 .leaderboard-avatar{border:3px solid #FFB74D; box-shadow:0 0 10px rgba(255,183,77,.4),0 2px 8px rgba(0,0,0,.2); background:linear-gradient(45deg,#FFCC80,#FFB74D)}
+@keyframes rotate{to{transform:rotate(360deg)}}
+.leaderboard-avatar img{width:100%; height:100%; object-fit:cover; border-radius:50%}
+.leaderboard-name,.leaderboard-score{font-weight:800; color:#eaf2ff; text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.leaderboard-name{font-size:16px; margin-bottom:2px}
+.leaderboard-score{font-size:18px; justify-self:end}
+/* Dark text for light top rows */
+.leaderboard-item.top1 .leaderboard-name,
+.leaderboard-item.top2 .leaderboard-name,
+.leaderboard-item.top3 .leaderboard-name,
+.leaderboard-item.top1 .leaderboard-score,
+.leaderboard-item.top2 .leaderboard-score,
+.leaderboard-item.top3 .leaderboard-score{color:#0f172a; text-shadow:none}
+
+@media (max-width:420px){
+  .title{font-size:20px}
+  .leaderboard-item{min-height:76px; padding:12px 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="main-header">
+  <button class="icon-btn" id="btn-menu" aria-label="Mở menu" aria-controls="sidebar" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="header-user-info">
+    <div class="header-controls" aria-label="Chọn ngôn ngữ">
+      <span class="lang-flag" id="lang-toggle" title="Chọn ngôn ngữ"></span>
+      <div class="lang-menu" id="lang-menu" role="menu">
+        <button type="button" data-lang="en" style="display:block;width:160px;text-align:left;background:transparent;border:none;color:#e8f2ff;padding:8px 10px;border-radius:8px;cursor:pointer">Tiếng Anh</button>
+        <button type="button" data-lang="vn" style="display:block;width:160px;text-align:left;background:transparent;border:none;color:#e8f2ff;padding:8px 10px;border-radius:8px;cursor:pointer">Tiếng Việt</button>
+      </div>
+    </div>
+    <div class="balance-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" class="wallet-icon"><path d="M22 12v5c0 3-2 5-5 5H7c-3 0-5-2-5-5v-5c0-2.72 1.64-4.62 4.19-4.94.26-.04.53-.06.81-.06h10c.26 0 .51.01.75.05C20.33 7.35 22 9.26 22 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.751 7.05c-.24-.04-.49-.05-.75-.05h-10c-.28 0-.55.02-.81.06.14-.28.34-.54.58-.78l3.25-3.26a3.525 3.525 0 0 1 4.96 0l1.75 1.77c.64.63.98 1.43 1.02 2.26ZM22 12.5h-3c-1.1 0-2 .9-2 2s.9 2 2 2h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <div class="balance-value">$<span id="real-balance">0</span></div>
+        <div class="balance-label">TK Thực</div>
+      </div>
+    </div>
+    <div class="balance-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" class="wallet-icon"><path d="M22 12v5c0 3-2 5-5 5H7c-3 0-5-2-5-5v-5c0-2.72 1.64-4.62 4.19-4.94.26-.04.53-.06.81-.06h10c.26 0 .51.01.75.05C20.33 7.35 22 9.26 22 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.751 7.05c-.24-.04-.49-.05-.75-.05h-10c-.28 0-.55.02-.81.06.14-.28.34-.54.58-.78l3.25-3.26a3.525 3.525 0 0 1 4.96 0l1.75 1.77c.64.63.98 1.43 1.02 2.26ZM22 12.5h-3c-1.1 0-2 .9-2 2s.9 2 2 2h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <div class="balance-value">$<span id="demo-balance">0</span></div>
+        <div class="balance-label">TK Demo</div>
+      </div>
+    </div>
+    <div class="user-profile balance-item" id="user-profile">
+      <div class="avatar"><img src="https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg" alt="Avatar"></div>
+      <div class="user-menu" id="user-menu">
+        <div class="user-menu-header">
+          <div class="user-menu-name" id="user-name">Loading...</div>
+          <div class="user-menu-email" id="user-email">Loading...</div>
+        </div>
+        <button type="button" class="user-menu-item logout" id="btn-logout-menu">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Backdrop & Sidebar -->
+<div id="backdrop" class="backdrop" aria-hidden="true"></div>
+<nav class="sidebar" id="sidebar" aria-label="Menu">
+  <a href="/" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg> Bảng điều khiển</a>
+  <a href="/aidudoan" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+    </svg> AI Dự đoán</a>
+  <a href="/copytrade" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    </svg> Copytrade</a>
+  <a href="/investment" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M21 11v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-8m18 0-9-9-9 9m18 0H3m15-3V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4"/>
+    </svg> Gói đầu tư</a>
+  <a href="/top-expert" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg> Top Chuyên Gia</a>
+  <a href="/vip" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M12 2l-3 7h-7l5.5 4-2.5 7 7-4 7 4-2.5-7 5.5-4h-7z"/>
+    </svg> Thành viên VIP</a>
+
+  <div class="sidebar-footer">
+    <div class="footer-title">Tài khoản liên kết</div>
+    <div class="footer-logo">
+      <img src="https://fintech3.net/static/media/logo.8490529fc9b2fd89a0ad.png" alt="Linked account logo">
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="card">
+    <div class="title">Bảng xếp hạng nhà đầu tư hằng ngày</div>
+    <ul class="leaderboard-list" id="leaderboard-list"></ul>
+  </div>
+</div>
+
+<script>
+/* ===== Auth ===== */
+const params = new URLSearchParams(window.location.search);
+const token = localStorage.getItem('token') || params.get('token');
+if(!token){ location.replace('/login'); } else { localStorage.setItem('token', token); }
+
+/* ===== Helpers ===== */
+function sanitizeName(name){ if(!name || typeof name!=='string') return '—'; return name.replaceAll('_','').trim(); }
+function getRandomAvatar(){ return "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg"; }
+function redirectToLogin(){ localStorage.removeItem('token'); sessionStorage.clear(); location.replace('/login'); }
+function parseNumber(val){ if(val==null) return NaN; const n=typeof val==='number'?val:parseFloat(String(val).replace(/[^\d.\-]/g,'')); return Number.isFinite(n)?n:NaN; }
+function formatPercent(val){ const n=parseNumber(val); return Number.isFinite(n)?`${n.toFixed(2)}%`:''; }
+
+/* ===== Header balances ===== */
+async function loadProfile(){
+  try{
+    const res = await fetch('/api/user/getProfile',{ method:'POST', headers:{ 'Authorization': `Bearer ${token}` } });
+    if(res.status===401){ redirectToLogin(); return; }
+    const js = await res.json();
+    if(js.status && js.data){
+      const real=document.getElementById('real-balance');
+      const demo=document.getElementById('demo-balance');
+      if(real) real.textContent=(js.data.balance||0).toLocaleString('vi-VN');
+      if(demo) demo.textContent=(js.data.demoBalance||0).toLocaleString('vi-VN');
+
+      const nm=document.getElementById('user-name'); if(nm) nm.textContent=js.data.userName||'User';
+      const em=document.getElementById('user-email'); if(em) em.textContent=js.data.email||'';
+    }else{ redirectToLogin(); }
+  }catch(e){ console.error('Profile load failed:', e); }
+}
+loadProfile();
+setInterval(loadProfile, 30000);
+
+/* ===== Sidebar toggle ===== */
+const body=document.body, sidebar=document.getElementById('sidebar'), backdrop=document.getElementById('backdrop'), btnMenu=document.getElementById('btn-menu');
+function openMenu(){ sidebar.classList.add('show'); backdrop.classList.add('show'); body.classList.add('noscroll'); btnMenu.setAttribute('aria-expanded','true'); backdrop.setAttribute('aria-hidden','false'); }
+function closeMenu(){ sidebar.classList.remove('show'); backdrop.classList.remove('show'); body.classList.remove('noscroll'); btnMenu.setAttribute('aria-expanded','false'); backdrop.setAttribute('aria-hidden','true'); }
+btnMenu.addEventListener('click', ()=>{ sidebar.classList.contains('show')?closeMenu():openMenu(); });
+backdrop.addEventListener('click', closeMenu);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMenu(); });
+
+/* ===== User menu ===== */
+const userProfile=document.getElementById("user-profile");
+const userMenu=document.getElementById("user-menu");
+userProfile?.addEventListener("click",(e)=>{ e.stopPropagation(); userMenu?.classList.toggle("show"); });
+document.addEventListener("click",(e)=>{ if(!e.target.closest("#user-profile")) userMenu?.classList.remove("show"); });
+document.getElementById("btn-logout-menu")?.addEventListener("click", async ()=>{
+  try{ await fetch("/api/logout",{method:"POST"}); }catch(e){}
+  redirectToLogin();
+});
+
+/* ===== Language dropdown (SVG click fixed) ===== */
+(function(){
+  const FLAG_SVG={
+    vn:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g fill-rule="nonzero"><circle cx="256" cy="256" r="256" fill="#da251d"/><path d="M252.3 294.6l51.2 37.2-19.6-60.3 51.3-37.2h-63.4l-19.6-60.3-19.6 60.3H169.3l51.3 37.2-19.6 60.3z" fill="#ff0"/></g></svg>',
+    en:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g fill-rule="nonzero"><path fill="#B22234" d="M0 0h512v512H0z"/><path stroke="#fff" stroke-width="40" d="M0 58h512M0 130h512M0 202h512M0 274h512M0 346h512M0 418h512"/><rect width="232" height="232" fill="#3C3B6E"/><g fill="#fff"><g id="s"><g id="t"><path d="M19 19l9 28-23-17h28l-23 17z"/></g><use href="#t" x="46"/><use href="#t" x="92"/><use href="#t" x="138"/><use href="#t" x="184"/></g><use href="#s" y="46"/><use href="#s" y="92"/><use href="#s" y="138"/></g></g></svg>'
+  };
+  const key='pref_lang';
+  const t=document.getElementById('lang-toggle');
+  const m=document.getElementById('lang-menu');
+  function setLang(l){ localStorage.setItem(key,l); if(t) t.innerHTML = FLAG_SVG[l]||FLAG_SVG.vn; }
+  t?.addEventListener('click',(e)=>{ e.stopPropagation(); m?.classList.toggle('show'); });
+  m?.addEventListener('click',(e)=>{ const b=e.target.closest('button[data-lang]'); if(!b) return; setLang(b.getAttribute('data-lang')); m.classList.remove('show'); });
+  document.addEventListener('click', e=>{ if(!e.target.closest('.header-controls')) m?.classList.remove('show'); });
+  setLang(localStorage.getItem(key)||'vn');
+})();
+
+/* ===== Leaderboard ===== */
+async function fetchServerLeaderboard(){
+  try{
+    const response = await fetch('/api/leaderboard',{ headers:{ 'Authorization': `Bearer ${token}` } });
+    if(response.status===401){ redirectToLogin(); return null; }
+    const data = await response.json();
+    if(data && (data.ok || data.status!==false)){
+      return { data: data.data||[], nextReset: typeof data.nextReset==='number'?data.nextReset:Math.floor(Date.now()/1000)+3600 };
+    }
+    console.error('Failed to fetch leaderboard:', data?.error||data); return null;
+  }catch(err){ console.error('Error fetching leaderboard:', err); return null; }
+}
+const rankIcons={1:"https://bitvita.mastertrade.app/static/icons/rank-1.png",2:"https://bitvita.mastertrade.app/static/icons/rank-2.png",3:"https://bitvita.mastertrade.app/static/icons/rank-3.png"};
+function parseNumber(val){ if(val==null) return NaN; const n=typeof val==='number'?val:parseFloat(String(val).replace(/[^\d.\-]/g,'')); return Number.isFinite(n)?n:NaN; }
+function formatPercent(val){ const n=parseNumber(val); return Number.isFinite(n)?`${n.toFixed(2)}%`:''; }
+function pickTop5(list){
+  if(!Array.isArray(list)) return [];
+  const arr=list.slice();
+  const hasRank=arr.some(it=>it.rank!=null||it.top!=null);
+  arr.sort((a,b)=>{
+    if(hasRank){
+      const ra=parseNumber(a.rank??a.top??Infinity), rb=parseNumber(b.rank??b.top??Infinity);
+      return ra-rb;
+    }
+    return parseNumber(b.score)-parseNumber(a.score);
+  });
+  return arr.slice(0,5);
+}
+function el(tag,cls,txt){ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+function renderLeaderboard(list){
+  const ul=document.getElementById('leaderboard-list'); ul.innerHTML='';
+  const top5=pickTop5(list);
+  if(top5.length===0){ ul.innerHTML='<li style="text-align:center;padding:40px;color:var(--muted)">Đang tải dữ liệu...</li>'; return; }
+  top5.forEach((item,idx)=>{
+    const rank=Number(item.rank??item.top??(idx+1));
+    const li=document.createElement('li'); let rowClass=''; let rankNode;
+    if(rank===1||rank===2||rank===3){
+      rowClass=`top${rank}`; rankNode=document.createElement('div'); rankNode.className='leaderboard-rank';
+      const img=document.createElement('img'); img.src=rankIcons[rank]; img.alt=`Top ${rank}`; rankNode.appendChild(img);
+    }else{ rankNode=el('div','leaderboard-rank',`#${rank}`); }
+    li.className=`leaderboard-item ${rowClass}`;
+    const info=document.createElement('div'); info.className='leaderboard-info';
+    const avatarBox=document.createElement('div'); avatarBox.className='leaderboard-avatar';
+    const avatarImg=document.createElement('img'); avatarImg.alt='Avatar'; avatarImg.src=item.avatar||getRandomAvatar(); avatarBox.appendChild(avatarImg);
+    const textBox=document.createElement('div');
+    const nameDiv=el('div','leaderboard-name',sanitizeName(item.name));
+    const sub=document.createElement('div'); sub.style.fontSize='11px'; sub.style.color='#8ab4ff'; sub.style.marginTop='2px'; sub.textContent=item.profitText??'';
+    textBox.appendChild(nameDiv); textBox.appendChild(sub);
+    info.appendChild(avatarBox); info.appendChild(textBox);
+    const score=el('div','leaderboard-score',formatPercent(item.score));
+    li.appendChild(rankNode); li.appendChild(info); li.appendChild(score);
+    ul.appendChild(li);
+  });
+}
+async function initLeaderboard(){
+  const data=await fetchServerLeaderboard();
+  const ul=document.getElementById('leaderboard-list');
+  if(data){ renderLeaderboard(data.data); console.log('Next leaderboard reset:', new Date(data.nextReset*1000).toLocaleString('vi-VN')); }
+  else{ ul.innerHTML='<li style="text-align:center;padding:40px;color:#ff6b6b">Không thể tải dữ liệu. Vui lòng thử lại.</li>'; }
+}
+async function refreshLeaderboard(){ const data=await fetchServerLeaderboard(); if(data) renderLeaderboard(data.data); }
+initLeaderboard();
+setInterval(refreshLeaderboard, 120000);
+</script>
+</body>
+</html>

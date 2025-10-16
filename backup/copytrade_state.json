@@ -1,0 +1,22 @@
+{
+  "enabled": false,
+  "cfg": {
+    "type": "demo",
+    "expert": "aaaaaa",
+    "so_tien_co_dinh": 10.0,
+    "so_von": 100.0,
+    "so_von_ban_dau": 100.0,
+    "so_tien_tai_khoan": 1000.0,
+    "so_tien_ban_dau": 1000.0,
+    "tp": 100.0,
+    "sl": 100.0,
+    "enabled": false,
+    "user_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXNPYmoiOnsiaWQiOjMxODF9LCJpYXQiOjE3NTYyMDQ2NTQsImV4cCI6NjE3NTYyMDQ2NTR9.RoqoVTn68Yji1rdRIerO77pu-9VbvDg90rUeOAqIWc4",
+    "username": "test_user"
+  },
+  "processed_ids": [
+    "id:4750",
+    6255556,
+    "id:4773"
+  ]
+}

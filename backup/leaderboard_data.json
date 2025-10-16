@@ -1,0 +1,97 @@
+{
+  "data": [
+    {
+      "rank": 1,
+      "name": "haiphong99",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 84.48349266398768,
+      "profit": 2224,
+      "score": "84.48",
+      "profitText": "+$2224"
+    },
+    {
+      "rank": 2,
+      "name": "bitcoin_hunter",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 83.79141763203906,
+      "profit": 1169,
+      "score": "83.79",
+      "profitText": "+$1169"
+    },
+    {
+      "rank": 3,
+      "name": "lamviec24h",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 80.09945211656921,
+      "profit": 1663,
+      "score": "80.10",
+      "profitText": "+$1663"
+    },
+    {
+      "rank": 4,
+      "name": "pubg_mobile_vn",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 78.26589270896629,
+      "profit": 1882,
+      "score": "78.27",
+      "profitText": "+$1882"
+    },
+    {
+      "rank": 5,
+      "name": "hochiminh_city",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 77.89147724989198,
+      "profit": 2604,
+      "score": "77.89",
+      "profitText": "+$2604"
+    },
+    {
+      "rank": 6,
+      "name": "crypto_king",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 76.93521688017016,
+      "profit": 3147,
+      "score": "76.94",
+      "profitText": "+$3147"
+    },
+    {
+      "rank": 7,
+      "name": "banh_mi_pro",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 74.1038381614553,
+      "profit": 183,
+      "score": "74.10",
+      "profitText": "+$183"
+    },
+    {
+      "rank": 8,
+      "name": "buiminh007",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 74.05477052984513,
+      "profit": 779,
+      "score": "74.05",
+      "profitText": "+$779"
+    },
+    {
+      "rank": 9,
+      "name": "vinh_city",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 71.92075122578134,
+      "profit": 2103,
+      "score": "71.92",
+      "profitText": "+$2103"
+    },
+    {
+      "rank": 10,
+      "name": "motorbike99",
+      "avatar": "https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg",
+      "winRate": 70.81464579661382,
+      "profit": 1354,
+      "score": "70.81",
+      "profitText": "+$1354"
+    }
+  ],
+  "timestamp": 1756605986.2814445,
+  "nextReset": 1756649186.2814448,
+  "seed": 9061272
+}

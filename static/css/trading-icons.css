@@ -1,0 +1,319 @@
+/* Trading Icons - CSS-based Buy and Sell Logos */
+
+/* Base icon styles */
+.trading-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  position: relative;
+  font-weight: bold;
+  font-size: 12px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  box-shadow: 
+    0 4px 12px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.trading-icon:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 
+    0 8px 20px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* Buy Icon - Green with upward arrow */
+.buy-icon {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+  border: 2px solid #16a34a;
+}
+
+.buy-icon::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 8px solid white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+}
+
+.buy-icon::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -10%);
+  border-radius: 1px;
+}
+
+.buy-icon:hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 50%, #166534 100%);
+  box-shadow: 
+    0 8px 20px rgba(34, 197, 94, 0.4),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* Sell Icon - Red with downward arrow */
+.sell-icon {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+  border: 2px solid #dc2626;
+}
+
+.sell-icon::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 8px solid white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+}
+
+.sell-icon::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -90%);
+  border-radius: 1px;
+}
+
+.sell-icon:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+  box-shadow: 
+    0 8px 20px rgba(239, 68, 68, 0.4),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* Alternative text-based icons */
+.buy-icon-text {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+  border: 2px solid #16a34a;
+}
+
+.buy-icon-text::before {
+  content: 'BUY';
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.sell-icon-text {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+  border: 2px solid #dc2626;
+}
+
+.sell-icon-text::before {
+  content: 'SELL';
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+}
+
+/* Large size variants */
+.trading-icon-lg {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.trading-icon-lg.buy-icon::before {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid white;
+  transform: translate(-50%, -65%);
+}
+
+.trading-icon-lg.buy-icon::after {
+  width: 3px;
+  height: 10px;
+  transform: translate(-50%, -15%);
+}
+
+.trading-icon-lg.sell-icon::before {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 10px solid white;
+  transform: translate(-50%, -35%);
+}
+
+.trading-icon-lg.sell-icon::after {
+  width: 3px;
+  height: 10px;
+  transform: translate(-50%, -85%);
+}
+
+.trading-icon-lg.buy-icon-text::before,
+.trading-icon-lg.sell-icon-text::before {
+  font-size: 10px;
+}
+
+/* Extra large size variants */
+.trading-icon-xl {
+  width: 48px;
+  height: 48px;
+  font-size: 16px;
+}
+
+.trading-icon-xl.buy-icon::before {
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 14px solid white;
+  transform: translate(-50%, -65%);
+}
+
+.trading-icon-xl.buy-icon::after {
+  width: 4px;
+  height: 14px;
+  transform: translate(-50%, -15%);
+}
+
+.trading-icon-xl.sell-icon::before {
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 14px solid white;
+  transform: translate(-50%, -35%);
+}
+
+.trading-icon-xl.sell-icon::after {
+  width: 4px;
+  height: 14px;
+  transform: translate(-50%, -85%);
+}
+
+.trading-icon-xl.buy-icon-text::before,
+.trading-icon-xl.sell-icon-text::before {
+  font-size: 12px;
+}
+
+/* Button integration styles */
+.btn-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-with-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-with-icon:hover::before {
+  left: 100%;
+}
+
+.btn-buy {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.btn-buy:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+}
+
+.btn-sell {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-sell:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Animated pulse effect for active states */
+@keyframes pulse-buy {
+  0%, 100% { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
+  50% { box-shadow: 0 4px 20px rgba(34, 197, 94, 0.6); }
+}
+
+@keyframes pulse-sell {
+  0%, 100% { box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+  50% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.6); }
+}
+
+.trading-icon.pulse-buy {
+  animation: pulse-buy 2s ease-in-out infinite;
+}
+
+.trading-icon.pulse-sell {
+  animation: pulse-sell 2s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .trading-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+  
+  .trading-icon-lg {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .trading-icon-xl {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .btn-with-icon {
+    padding: 10px 16px;
+    font-size: 14px;
+    gap: 6px;
+  }
+}
+
+/* Dark theme variants */
+.dark-theme .trading-icon {
+  box-shadow: 
+    0 4px 12px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.dark-theme .trading-icon:hover {
+  box-shadow: 
+    0 8px 20px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+}

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;max-width:1200px;margin:0 auto;padding:20px}
+  .section{border:1px solid #ddd;padding:20px;margin-bottom:20px;border-radius:8px}
+  .form-group{margin-bottom:14px}
+  label{display:block;margin-bottom:6px;font-weight:700}
+  input[type="text"],input[type="number"],select{width:260px;max-width:100%;padding:8px;border:1px solid #ddd;border-radius:6px}
+  button{background:#4CAF50;color:#fff;padding:9px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:700}
+  button:hover{background:#43a047}
+  .danger{background:#f44336} .danger:hover{background:#e53935}
+  .ghost{background:#e0e7ff;color:#1e293b} .ghost:hover{background:#c7d2fe}
+  .leaderboard{width:100%;border-collapse:collapse;margin-top:12px}
+  .leaderboard th,.leaderboard td{border:1px solid #eee;padding:10px;text-align:left}
+  .leaderboard th{background:#f7f7f7}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .error{color:#e11d48;margin-top:8px}
+  .success{color:#16a34a;margin-top:8px}
+  /* drag visual */
+  tr.dragging{opacity:.5}
+  tr.drop-target{outline:2px dashed #93c5fd}
+</style>
+</head>
+<body>
+<h1>Admin Panel</h1>
+
+<!-- ===== LEADERBOARD ===== -->
+<div class="section">
+  <h2>Leaderboard Controls</h2>
+
+  <div class="form-group">
+    <label for="username">Select User:</label>
+    <select id="username" onchange="userSelected()">
+      <option value="">Select a user...</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="newName">Edit Name:</label>
+    <input type="text" id="newName" placeholder="Enter new name"/>
+  </div>
+
+  <div class="form-group">
+    <label for="winRate">Win Rate (%):</label>
+    <input type="number" id="winRate" min="0" max="100" step="0.01" placeholder="Enter win rate"/>
+  </div>
+
+  <div class="form-group">
+    <label for="profit">Profit ($):</label>
+    <input type="number" id="profit" step="0.01" placeholder="Enter profit amount"/>
+  </div>
+
+  <button onclick="updateUser()">Update User</button>
+  <div id="updateStatus"></div>
+</div>
+
+<div class="section">
+  <h2>Current Leaderboard</h2>
+  <button class="ghost" onclick="refreshLeaderboard()">Refresh</button>
+  <button class="danger" onclick="resetLeaderboard()">Reset All</button>
+  <table class="leaderboard">
+    <thead>
+      <tr>
+        <th>Rank</th><th>Username</th><th>Win Rate</th><th>Profit</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboardBody"></tbody>
+  </table>
+</div>
+
+<!-- ===== TOP PACKAGES ===== -->
+<div class="section">
+  <h2>Top Gói Đầu Tư</h2>
+  <div class="form-group">
+    <label for="pkgName">Tên gói</label>
+    <input type="text" id="pkgName" placeholder="VD: Tele: hoangduy995"/>
+  </div>
+  <div class="form-group">
+    <label for="pkgPnl">PnL 24h (%)</label>
+    <input type="number" id="pkgPnl" step="0.1" placeholder="VD: 95"/>
+  </div>
+  <div class="form-group">
+    <label for="pkgAmount">Số tiền ($)</label>
+    <input type="number" id="pkgAmount" step="1" placeholder="VD: 475"/>
+  </div>
+  <button onclick="addPackage()">Thêm gói</button>
+  <div id="pkgStatus"></div>
+
+  <table class="leaderboard" style="margin-top:14px">
+    <thead>
+      <tr>
+        <th style="width:80px">Hạng</th>
+        <th>Tên</th>
+        <th style="width:120px">PnL 24h</th>
+        <th style="width:140px">Số tiền</th>
+        <th style="width:280px">Hành động</th>
+      </tr>
+    </thead>
+    <tbody id="pkgBody"></tbody>
+  </table>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="ghost" onclick="refreshPackages()">Refresh</button>
+    <button class="danger" onclick="resetPackages()">Reset danh sách</button>
+    <button class="ghost" onclick="sortByProfitDesc()">Sắp xếp theo Profit ↓</button>
+    <small style="opacity:.7">Mẹo: kéo-thả các hàng để đổi thứ hạng, sau đó nhấn “Lưu thứ tự”.</small>
+    <button onclick="saveOrder()">Lưu thứ tự</button>
+  </div>
+</div>
+
+<script>
+/* ---------- Helpers ---------- */
+function showMessage(el, msg, isError=false){ el.textContent=msg; el.className=isError?'error':'success'; setTimeout(()=>{ if(el.textContent===msg) el.textContent=''; },2500); }
+function money(n){ const x=Number(n)||0; return x%1===0?x.toString():x.toFixed(2); }
+function fmtUsd(n){ try{ return Number(n||0).toLocaleString('en-US'); }catch{ return n; } }
+
+/* ---------- Leaderboard ---------- */
+async function updateUser(){
+  const username = document.getElementById('username').value;
+  const newName  = document.getElementById('newName').value.trim();
+  const winRate  = parseFloat(document.getElementById('winRate').value);
+  const profit   = parseFloat(document.getElementById('profit').value);
+  const statusEl = document.getElementById('updateStatus');
+
+  if(!username || !Number.isFinite(winRate) || !Number.isFinite(profit)){
+    showMessage(statusEl, 'Please fill all fields correctly', true); return;
+  }
+  try{
+    const r = await fetch('/api/admin/leaderboard/update',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username, newName, winRate, profit })
+    });
+    const js = await r.json();
+    if(js.ok){ showMessage(statusEl,'Updated successfully'); refreshLeaderboard(); populateUserSelect(); }
+    else{ showMessage(statusEl, js.error||'Update failed', true); }
+  }catch{ showMessage(statusEl,'Error updating user', true); }
+}
+async function refreshLeaderboard(){
+  try{
+    const r = await fetch('/api/leaderboard'); const js = await r.json();
+    if(js.ok){
+      const tbody=document.getElementById('leaderboardBody');
+      tbody.innerHTML = (js.data||[]).map(u=>`
+        <tr>
+          <td>${u.rank}</td>
+          <td>${u.name}</td>
+          <td>${Number(u.winRate||0).toFixed(2)}%</td>
+          <td>$${fmtUsd(u.profit||0)}</td>
+        </tr>`).join('');
+    }
+  }catch(e){ console.error('Error loading leaderboard',e); }
+}
+async function resetLeaderboard(){
+  if(!confirm('Are you sure you want to reset the leaderboard?')) return;
+  try{
+    const r = await fetch('/api/leaderboard/force-reset',{method:'POST'});
+    const js = await r.json();
+    if(js.ok){ refreshLeaderboard(); showMessage(document.getElementById('updateStatus'),'Leaderboard reset successfully'); }
+  }catch(e){ console.error('resetLeaderboard',e); }
+}
+async function userSelected(){
+  const username=document.getElementById('username').value;
+  if(!username) return;
+  const r = await fetch('/api/leaderboard'); const js = await r.json();
+  if(js.ok){
+    const u = (js.data||[]).find(x=>x.name===username);
+    if(u){
+      document.getElementById('newName').value = u.name;
+      document.getElementById('winRate').value = u.winRate;
+      document.getElementById('profit').value  = u.profit;
+    }
+  }
+}
+async function populateUserSelect(){
+  const sel=document.getElementById('username');
+  try{
+    const r=await fetch('/api/leaderboard'); const js=await r.json();
+    if(js.ok){
+      sel.innerHTML = '<option value="">Select a user...</option>' + (js.data||[]).map(u=>`<option value="${u.name}">${u.name}</option>`).join('');
+    }
+  }catch(e){ console.error('populateUserSelect',e); }
+}
+
+/* ---------- Packages Admin ---------- */
+let pkgCache = []; // giữ dữ liệu hiện tại
+
+function rowHtml(it){
+  const id = it.id;
+  return `
+    <tr draggable="true" data-id="${id}">
+      <td><b>${it.rank ?? ''}</b></td>
+      <td>
+        <input type="text" value="${(it.name||'').replace(/"/g,'&quot;')}" data-field="name" style="width:100%"/>
+      </td>
+      <td>
+        <input type="number" step="0.1" value="${Number(it.pnl||0)}" data-field="pnl" style="width:110px"/> %
+      </td>
+      <td>$ <input type="number" step="1" value="${Number(it.amount||0)}" data-field="amount" style="width:110px"/></td>
+      <td class="row-actions">
+        <button class="ghost" onclick="moveRow('${id}',-1)">▲</button>
+        <button class="ghost" onclick="moveRow('${id}',+1)">▼</button>
+        <button onclick="saveRow('${id}')">Lưu</button>
+        <button class="danger" onclick="deletePackage('${id}')">Xoá</button>
+      </td>
+    </tr>`;
+}
+
+async function refreshPackages(){
+  try{
+    const r=await fetch('/api/investment-packages'); const js=await r.json();
+    if(!js.ok) return;
+    pkgCache = (js.data||[]).slice().sort((a,b)=>(a.rank??999)-(b.rank??999));
+    renderPkgTable();
+  }catch(e){ console.error('refreshPackages',e); }
+}
+function renderPkgTable(){
+  const tbody=document.getElementById('pkgBody');
+  tbody.innerHTML = pkgCache.map(rowHtml).join('') || '<tr><td colspan="5">Chưa có gói</td></tr>';
+  enableRowDnD();
+}
+function nextRank(){
+  if(pkgCache.length===0) return 1;
+  return Math.max(...pkgCache.map(x=>Number(x.rank||0))) + 1;
+}
+function showPkgMsg(msg,err=false){ const el=document.getElementById('pkgStatus'); showMessage(el,msg,err); }
+
+async function addPackage(){
+  const name=document.getElementById('pkgName').value.trim();
+  const pnl =parseFloat(document.getElementById('pkgPnl').value);
+  const amount=parseFloat(document.getElementById('pkgAmount').value);
+  if(!name || !Number.isFinite(pnl) || !Number.isFinite(amount)){ showPkgMsg('Vui lòng nhập đủ Tên, PnL, Số tiền',true); return; }
+  try{
+    const r=await fetch('/api/admin/investment-packages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'add', item:{ name, pnl, amount, rank: nextRank() } })
+    });
+    const js=await r.json();
+    if(js.ok){
+      document.getElementById('pkgName').value='';
+      document.getElementById('pkgPnl').value='';
+      document.getElementById('pkgAmount').value='';
+      showPkgMsg('Đã thêm gói');
+      refreshPackages();
+    }else{ showPkgMsg(js.error||'Thất bại',true); }
+  }catch(e){ showPkgMsg('Lỗi kết nối',true); }
+}
+async function saveRow(id){
+  const tr = document.querySelector(`tr[data-id="${id}"]`);
+  if(!tr) return;
+  const name   = tr.querySelector('input[data-field="name"]').value.trim();
+  const pnl    = parseFloat(tr.querySelector('input[data-field="pnl"]').value);
+  const amount = parseFloat(tr.querySelector('input[data-field="amount"]').value);
+  const current = pkgCache.find(x=>x.id===id) || {};
+  const rank = current.rank;
+  if(!name || !Number.isFinite(pnl) || !Number.isFinite(amount)){ showPkgMsg('Giá trị không hợp lệ',true); return; }
+  try{
+    const r=await fetch('/api/admin/investment-packages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'update', id, item:{ name, pnl, amount, rank } })
+    });
+    const js=await r.json();
+    if(js.ok){ showPkgMsg('Đã lưu'); refreshPackages(); }
+    else{ showPkgMsg(js.error||'Không lưu được',true); }
+  }catch(e){ showPkgMsg('Lỗi kết nối',true); }
+}
+async function deletePackage(id){
+  if(!confirm('Xoá gói này?')) return;
+  try{
+    const r=await fetch('/api/admin/investment-packages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'delete', id })
+    });
+    const js=await r.json();
+    if(js.ok){ showPkgMsg('Đã xoá'); refreshPackages(); }
+    else{ showPkgMsg(js.error||'Thất bại',true); }
+  }catch(e){ showPkgMsg('Lỗi kết nối',true); }
+}
+
+function moveRow(id, dir){
+  const idx = pkgCache.findIndex(x=>x.id===id);
+  if(idx<0) return;
+  const j = idx+dir;
+  if(j<0 || j>=pkgCache.length) return;
+  // swap
+  [pkgCache[idx], pkgCache[j]] = [pkgCache[j], pkgCache[idx]];
+  // re-rank sequentially
+  pkgCache.forEach((x,i)=> x.rank = i+1 );
+  renderPkgTable();
+}
+
+function sortByProfitDesc(){
+  pkgCache.sort((a,b)=> (Number(b.amount||0) - Number(a.amount||0)));
+  pkgCache.forEach((x,i)=> x.rank=i+1);
+  renderPkgTable();
+}
+
+async function saveOrder(){
+  const order = Array.from(document.querySelectorAll('#pkgBody tr[data-id]')).map(tr=>tr.dataset.id);
+  try{
+    const r=await fetch('/api/admin/investment-packages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'reorder', order })
+    });
+    const js=await r.json();
+    if(js.ok){ showPkgMsg('Đã lưu thứ tự'); refreshPackages(); }
+    else{ showPkgMsg(js.error||'Không lưu được thứ tự',true); }
+  }catch(e){ showPkgMsg('Lỗi kết nối',true); }
+}
+
+async function resetPackages(){
+  if(!confirm('Reset toàn bộ danh sách gói?')) return;
+  try{
+    const r=await fetch('/api/admin/investment-packages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'reset' })
+    });
+    const js=await r.json();
+    if(js.ok){ showPkgMsg('Đã reset'); refreshPackages(); }
+    else{ showPkgMsg(js.error||'Reset thất bại',true); }
+  }catch(e){ showPkgMsg('Lỗi kết nối',true); }
+}
+
+/* Drag & drop rows */
+function enableRowDnD(){
+  const rows = document.querySelectorAll('#pkgBody tr[draggable="true"]');
+  let dragging=null;
+  rows.forEach(tr=>{
+    tr.addEventListener('dragstart', e=>{ dragging=tr; tr.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+    tr.addEventListener('dragend',   ()=>{ dragging?.classList.remove('dragging'); dragging=null; updateRanksFromDom(); });
+    tr.addEventListener('dragover', e=>{
+      e.preventDefault();
+      const tbody=tr.parentElement;
+      const rect=tr.getBoundingClientRect();
+      const after = (e.clientY - rect.top) > rect.height/2;
+      tbody.insertBefore(dragging, after? tr.nextSibling : tr);
+    });
+  });
+}
+function updateRanksFromDom(){
+  const ids = Array.from(document.querySelectorAll('#pkgBody tr[data-id]')).map((tr,i)=>{
+    const id=tr.dataset.id;
+    const obj = pkgCache.find(x=>x.id===id); if(obj) obj.rank=i+1;
+    tr.querySelector('td:first-child b').textContent = (i+1);
+    return id;
+  });
+  // Không call API ở đây để tránh spam — bấm “Lưu thứ tự” để gửi reorder một lần.
+}
+
+/* ---------- initial ---------- */
+async function init(){
+  await refreshLeaderboard();
+  await populateUserSelect();
+  await refreshPackages();
+}
+init();
+</script>
+</body>
+</html>

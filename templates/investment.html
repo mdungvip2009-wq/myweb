@@ -1,0 +1,816 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no" />
+<title>Gói đầu tư — BO Helper</title>
+<style>
+:root{
+  --bg:#0b1320; --bg2:#0a1223;
+  --card:#0f1f35; --card2:#102645;
+  --accent:#2dd4bf; --brand:#34c759; --sell:#ff4d4f;
+  --muted:#9aa3ab; --text:#eaf2ff; --text-soft:#cfe0ff;
+  --line:#183558; --radius:16px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:linear-gradient(180deg,var(--bg),var(--bg2));
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+  position: relative; overflow-x: hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 30% 70%, rgba(45,212,191,.08) 0%, transparent 55%),
+    radial-gradient(circle at 70% 30%, rgba(52,199,89,.06) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(255,215,0,.05) 0%, transparent 55%);
+  animation:floatingParticles 35s ease-in-out infinite;
+}
+@keyframes floatingParticles{
+  0%,100%{transform:translateY(0) rotate(0) scale(1)}
+  25%{transform:translateY(-25px) rotate(2deg) scale(1.03)}
+  50%{transform:translateY(20px) rotate(-1.5deg) scale(.97)}
+  75%{transform:translateY(-15px) rotate(1deg) scale(1.02)}
+}
+.hidden{display:none!important}
+.noscroll{overflow:hidden}
+
+/* ===== HEADER ===== */
+.main-header{
+  position:fixed; top:0; left:0; right:0; height:56px;
+  background:var(--bg); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 14px; z-index:110;
+}
+.wrap{max-width:1080px;margin:12px auto 84px;padding:56px 14px 0;position:relative;z-index:1}
+.icon-btn{
+  position:relative; width:34px; height:34px; border:none;
+  background:#1a2a40; border-radius:10px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 0;
+}
+.icon-btn span{display:block; width:20px; height:2px; background:#fff; border-radius:2px}
+.header-user-info{display:flex; align-items:center; gap:12px}
+.balance-item{display:flex; align-items:center; gap:8px; background:var(--card); padding:8px 12px; border-radius:12px; border:1px solid var(--line)}
+.wallet-icon{width:20px; height:20px; color:#fff}
+.balance-value{font-size:14px; font-weight:700; color:#eaf2ff}
+.balance-label{font-size:11px; color:#9aa3ab; margin-top:-2px}
+
+.user-profile{display:flex; align-items:center; position:relative; cursor:pointer}
+.user-menu{position:absolute; top:calc(100% + 8px); right:0; background:#223149; border:1px solid #2a3f5e; border-radius:12px; padding:12px; min-width:220px; box-shadow:0 10px 25px rgba(0,0,0,.35); display:none; z-index:220}
+.user-menu.show{display:block}
+.user-menu-header{padding:8px 0; border-bottom:1px solid #2a3f5e; margin-bottom:8px}
+.user-menu-name{font-size:14px; font-weight:700; color:#e8f2ff; margin-bottom:4px}
+.user-menu-email{font-size:12px; color:#9aa3ab}
+.user-menu-item{display:block; width:100%; text-align:left; background:transparent; border:none; color:#e8f2ff; padding:10px 12px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; transition:background .2s ease}
+.user-menu-item:hover{background:#2a3b54}
+.user-menu-item.logout{color:#ff6b6b; margin-top:4px; border-top:1px solid #2a3f5e; padding-top:12px}
+.avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;border:2px solid var(--line);box-sizing:border-box}
+.avatar img{width:100%; height:100%; object-fit:cover}
+
+@media (max-width:420px){
+  .balance-label{display:none}
+  .balance-value{font-size:13px}
+  .header-user-info{gap:8px}
+}
+@media (min-width:768px){
+  .header-user-info{margin-left:auto}
+}
+
+/* ===== Language button ===== */
+.header-controls{position:relative}
+.lang-flag{
+  width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:50%;border:2px solid var(--line);overflow:hidden;background:#213247;transition:.2s ease
+}
+.lang-flag:hover{border-color:var(--accent);transform:scale(1.05)}
+.lang-flag svg{width:100%;height:100%;display:block;pointer-events:none}
+.lang-menu{position:absolute;top:36px;right:0;background:#223149;border:1px solid #2a3f5e;border-radius:12px;padding:8px 10px;box-shadow:0 10px 25px rgba(0,0,0,.35);display:none;z-index:300}
+.lang-menu.show{display:block}
+
+/* ===== Sidebar ===== */
+.backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:140}
+.backdrop.show{opacity:1; pointer-events:auto}
+.sidebar{
+  position:fixed; top:0; left:0; height:100dvh; width:84vw; max-width:320px;
+  background:#0f1b2b; border-right:1px solid #173152;
+  transform:translateX(-100%); transition:transform .25s ease;
+  z-index:145; display:flex; flex-direction:column; gap:12px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 14px 18px;
+}
+.sidebar.show{transform:translateX(0)}
+.menu-item{
+  display:block; width:100%; padding:12px 14px; border-radius:14px;
+  background:#213247; color:#e8f2ff; font-weight:800; text-decoration:none; border:1px solid #2a3f5e
+}
+.menu-logout{background:#2a3b54; color:#ffd9d9}
+
+/* ===== Sidebar footer: Linked account (bottom) ===== */
+.sidebar-footer{
+  margin-top:auto; /* stick to bottom */
+  background:#1b2a40; border:1px solid #2a3f5e; border-radius:12px;
+  padding:12px; color:#cfe0ff; text-align:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.sidebar-footer .footer-title{
+  font-weight:700;font-size:10px;margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase;color:#9fb7d9
+}
+.sidebar-footer .footer-logo{
+  display:flex;align-items:center;justify-content:center;
+  background:#12233a;border:1px solid #2a3f5e;border-radius:10px;padding:8px;height:64px; /* ~60–65px block */
+}
+.sidebar-footer .footer-logo img{
+  width:150px; max-width:100%; height:auto; object-fit:contain;
+  border-radius:8px; background:#0f1f35;
+  filter:drop-shadow(0 0 12px rgba(45,212,191,.35))
+}
+
+/* ===== Cards / Forms ===== */
+.card{
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:0 12px 40px rgba(0,0,0,.35);
+  position: relative; overflow: hidden; backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); animation: cardFadeIn 0.6s ease-out;
+}
+@keyframes cardFadeIn{0%{opacity:0;transform:translateY(20px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.section-title{font-weight:900;font-size:20px;margin:4px 0 12px}
+.row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.row.cols-3{grid-template-columns:repeat(3,1fr)}
+.row.cols-4{grid-template-columns:repeat(4,1fr)}
+.col{display:flex;flex-direction:column}
+label{display:block;font-size:12px;color:#9aa3ab;margin:0 0 6px;font-weight:700}
+input,select{
+  width:100%;height:46px;border-radius:12px;border:2px solid #1d334f;
+  background:rgba(9,26,45,.8);color:#fff;padding:0 12px;font-size:15px;outline:none;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+input:focus, select:focus{border-color:var(--accent); background:rgba(9,26,45,.95); box-shadow:0 0 0 4px rgba(45,212,191,.1)}
+.hint{font-size:12px;color:#a8c3df;margin-top:4px}
+.small{font-size:12px;color:#a8c3df}
+.msg{color:#cfe0ff;font-size:13px;margin-top:8px;min-height:18px}
+.btn-row{display:flex;gap:10px;margin-top:12px;justify-content:flex-end}
+button{height:46px;border-radius:12px;border:0;color:#fff;font-weight:900;cursor:pointer;transition:.16s transform;padding:0 16px}
+button:active{transform:scale(.985)}
+.btn-primary{background:linear-gradient(135deg,#36d46a,#2ab95c)}
+.btn-flat{background:#2a3b54}
+.btn-danger{background:#6b2a2a}
+
+/* sequence pills */
+.preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{background:#0d1b31;border:1px solid #173458;border-radius:10px;padding:8px 10px;font-weight:800}
+
+/* Stats display */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-item{background:#0d1b31;border:1px solid #173458;border-radius:10px;padding:8px;text-align:center}
+.stat-label{font-size:11px;color:#9fb3c8;margin-bottom:4px}
+.stat-value{font-size:14px;font-weight:900}
+.stat-value.profit{color:var(--brand)}
+.stat-value.loss{color:var(--sell)}
+
+@media(max-width:720px){ .row,.row.cols-3,.row.cols-4{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="main-header">
+  <button class="icon-btn" id="btn-menu" aria-label="Mở/đóng menu" aria-controls="sidebar" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="header-user-info">
+    <div class="header-controls" aria-label="Chọn ngôn ngữ">
+      <span class="lang-flag" id="lang-toggle" title="Chọn ngôn ngữ"></span>
+      <div class="lang-menu" id="lang-menu">
+        <button type="button" data-lang="en" style="display:block;width:160px;text-align:left;background:transparent;border:none;color:#e8f2ff;padding:8px 10px;border-radius:8px;cursor:pointer">Tiếng Anh</button>
+        <button type="button" data-lang="vn" style="display:block;width:160px;text-align:left;background:transparent;border:none;color:#e8f2ff;padding:8px 10px;border-radius:8px;cursor:pointer">Tiếng Việt</button>
+      </div>
+    </div>
+
+    <div class="balance-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" class="wallet-icon"><path d="M22 12v5c0 3-2 5-5 5H7c-3 0-5-2-5-5v-5c0-2.72 1.64-4.62 4.19-4.94.26-.04.53-.06.81-.06h10c.26 0 .51.01.75.05C20.33 7.35 22 9.26 22 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.751 7.05c-.24-.04-.49-.05-.75-.05h-10c-.28 0-.55.02-.81.06.14-.28.34-.54.58-.78l3.25-3.26a3.525 3.525 0 0 1 4.96 0l1.75 1.77c.64.63.98 1.43 1.02 2.26ZM22 12.5h-3c-1.1 0-2 .9-2 2s.9 2 2 2h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <div class="balance-value">$<span id="real-balance">0</span></div>
+        <div class="balance-label">TK Thực</div>
+      </div>
+    </div>
+
+    <div class="balance-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" class="wallet-icon"><path d="M22 12v5c0 3-2 5-5 5H7c-3 0-5-2-5-5v-5c0-2.72 1.64-4.62 4.19-4.94.26-.04.53-.06.81-.06h10c.26 0 .51.01.75.05C20.33 7.35 22 9.26 22 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.751 7.05c-.24-.04-.49-.05-.75-.05h-10c-.28 0-.55.02-.81.06.14-.28.34-.54.58-.78l3.25-3.26a3.525 3.525 0 0 1 4.96 0l1.75 1.77c.64.63.98 1.43 1.02 2.26ZM22 12.5h-3c-1.1 0-2 .9-2 2s.9 2 2 2h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <div class="balance-value">$<span id="demo-balance">0</span></div>
+        <div class="balance-label">TK Demo</div>
+      </div>
+    </div>
+
+    <div class="user-profile balance-item" id="user-profile">
+      <div class="avatar"><img src="https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg" alt="Avatar"></div>
+      <div class="user-menu" id="user-menu">
+        <div class="user-menu-header">
+          <div class="user-menu-name" id="user-name">Loading...</div>
+          <div class="user-menu-email" id="user-email">Loading...</div>
+        </div>
+        <button type="button" class="user-menu-item logout" id="btn-logout-menu">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Sidebar ===== -->
+<div id="backdrop" class="backdrop" aria-hidden="true"></div>
+<nav class="sidebar" id="sidebar" aria-label="Menu">
+  <a href="/" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg> Bảng điều khiển</a>
+  <a href="/aidudoan" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+    </svg> AI Dự đoán</a>
+  <a href="/copytrade" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    </svg> Copytrade</a>
+  <a href="/investment" class="menu-item active">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M21 11v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-8m18 0-9-9-9 9m18 0H3m15-3V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4"/>
+    </svg> Gói đầu tư</a>
+  <a href="/top-expert" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg> Top Chuyên Gia</a>
+  <a href="/vip" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M12 2l-3 7h-7l5.5 4-2.5 7 7-4 7 4-2.5-7 5.5-4h-7z"/>
+    </svg> Thành viên VIP</a>
+
+  <div class="sidebar-footer">
+    <div class="footer-title">Tài khoản liên kết</div>
+    <div class="footer-logo">
+      <!-- Logo lớn, chỉ icon, không thêm chữ phụ -->
+      <img src="https://fintech3.net/static/media/logo.8490529fc9b2fd89a0ad.png" alt="Linked account">
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE ===== -->
+<div class="wrap">
+  <div class="card">
+    <div class="section-title">Tạo gói đầu tư (theo tín hiệu AI)</div>
+
+    <!-- Thông số chung -->
+    <div class="row">
+      <div class="col">
+        <label>Loại tài khoản</label>
+        <select id="acc-type">
+          <option value="live">LIVE</option>
+          <option value="demo" selected>DEMO</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Hệ số vào lệnh</label>
+        <input id="entry-mult" type="number" min="1" step="1" value="1">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div class="col">
+        <label>Tín hiệu</label>
+        <select id="signal">
+          <option value="ai" selected>AI / Auto</option>
+          <option value="reverse">AI đảo lệnh</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Số tiền cố định ($) — (nếu chiến lược cần)</label>
+        <input id="fixed-amt" type="number" min="1" step="1" value="1">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div class="col">
+        <label>Mục tiêu ngày ($)</label>
+        <input id="target" type="number" min="0" step="0.01" value="50">
+      </div>
+      <div class="col">
+        <label>Giới hạn thua/ngày ($)</label>
+        <input id="daily-sl" type="number" min="0" step="0.01" value="50">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div class="col">
+        <label>Tối thiểu Ratio (%)</label>
+        <input id="min-ratio" type="number" min="0" max="100" step="1" value="70">
+      </div>
+      <div class="col">
+        <label>Tối đa lệnh/ngày</label>
+        <input id="max-trades" type="number" min="1" step="1" value="12">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div class="col">
+        <label>Chốt lời ($)</label>
+        <input id="tp" type="number" min="0" step="0.01" value="40">
+      </div>
+      <div class="col">
+        <label>Cắt lỗ ($)</label>
+        <input id="sl" type="number" min="0" step="0.01" value="40">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div class="col">
+        <label>Model AI</label>
+        <select id="ai-model">
+          <option value="agent5" selected>Agent v5.0</option>
+          <option value="agent4">Agent v4.2</option>
+        </select>
+      </div>
+      <div class="col"></div>
+    </div>
+  </div>
+
+  <!-- CHIẾN LƯỢC VỐN -->
+  <div class="card" style="margin-top:12px">
+    <div class="section-title">Chiến lược vốn</div>
+
+    <div class="row">
+      <div class="col">
+        <label>Phương pháp</label>
+        <select id="cap-method">
+          <option value="single">Single (độc lập)</option>
+          <option value="compound">Compound</option>
+        </select>
+        <div class="hint">Hai phương pháp này chỉ là “vỏ” – lệnh vẫn theo tín hiệu AI, khác nhau ở cách cộng dồn lợi nhuận.</div>
+      </div>
+
+      <div class="col">
+        <label>Chiến lược vốn</label>
+        <select id="cap-strategy">
+          <option value="martingale" selected>Martingale (tăng sau thua)</option>
+          <option value="paroli">Paroli / Reverse Martingale (tăng sau thắng)</option>
+          <option value="dalembert">D'Alembert</option>
+          <option value="oscars">Oscar's Grind</option>
+          <option value="fibo">Fibonacci</option>
+          <option value="kelly">Kelly (lite)</option>
+          <option value="victor2">Victor 2</option>
+          <option value="victor3">Victor 3</option>
+          <option value="victor4">Victor 4</option>
+          <option value="custom">Custom (chuỗi tự nhập)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- PARAMS động -->
+    <div id="dyn-params" style="margin-top:12px"></div>
+
+    <!-- PREVIEW -->
+    <div class="small" style="margin-top:8px">Preview 12 bước (số “đơn vị” sẽ nhân với “Số tiền cố định” nếu áp dụng).</div>
+    <div id="seq-preview" class="preview"></div>
+
+    <div class="btn-row">
+      <button id="btn-save" class="btn-primary" type="button">Lưu gói</button>
+      <button id="btn-reset" class="btn-flat" type="button">Reset</button>
+    </div>
+    <div id="form-msg" class="msg"></div>
+  </div>
+
+  <!-- DANH SÁCH GÓI -->
+  <div class="card" style="margin-top:12px">
+    <div class="section-title">Gói hiện có</div>
+    <div id="pkg-list" class="small">Chưa có gói nào.</div>
+  </div>
+</div>
+
+<script>
+/* ===== Auth ===== */
+const params = new URLSearchParams(window.location.search);
+const token = localStorage.getItem('token') || params.get('token');
+if(!token){ location.replace('/login'); } else { localStorage.setItem('token', token); }
+
+/* ===== Helpers ===== */
+function money(n){ const x=Number(n)||0; return x%1===0?x.toString():x.toFixed(2); }
+const el = sel => document.querySelector(sel);
+function showMsg(s){ const m=el('#form-msg'); if(m){ m.textContent=s; setTimeout(()=>{ if(m.textContent===s) m.textContent=''; },1600); } }
+
+/* ===== Sidebar ===== */
+const body=document.body, sidebar=document.getElementById('sidebar'), backdrop=document.getElementById('backdrop'), btnMenu=document.getElementById('btn-menu');
+function openMenu(){ sidebar.classList.add('show'); backdrop.classList.add('show'); body.classList.add('noscroll'); }
+function closeMenu(){ sidebar.classList.remove('show'); backdrop.classList.remove('show'); body.classList.remove('noscroll'); }
+btnMenu.addEventListener('click', ()=> sidebar.classList.contains('show')?closeMenu():openMenu());
+backdrop.addEventListener('click', closeMenu);
+
+/* ===== Profile (balances) ===== */
+async function loadProfile(){
+  try{
+    const res=await fetch('/api/user/getProfile',{method:'POST',headers:{'Authorization':`Bearer ${token}`}});
+    if(res.status===401){ localStorage.removeItem('token'); location.replace('/login'); return; }
+    const js=await res.json();
+    if(js.status && js.data){
+      el('#real-balance').textContent=(js.data.balance||0).toLocaleString('vi-VN');
+      el('#demo-balance').textContent=(js.data.demoBalance||0).toLocaleString('vi-VN');
+      const nm=document.getElementById("user-name"); if(nm) nm.textContent = js.data.userName || "User";
+      const em=document.getElementById("user-email"); if(em) em.textContent = js.data.email || "";
+    }
+  }catch{}
+}
+loadProfile(); setInterval(loadProfile, 30000);
+
+/* ===== User menu ===== */
+const userProfile=document.getElementById("user-profile");
+const userMenu=document.getElementById("user-menu");
+userProfile?.addEventListener("click",(e)=>{ e.stopPropagation(); userMenu?.classList.toggle("show"); });
+document.addEventListener("click",(e)=>{ if(!e.target.closest("#user-profile")) userMenu?.classList.remove("show"); });
+document.getElementById("btn-logout-menu")?.addEventListener("click", async ()=>{
+  try{ await fetch("/api/logout",{method:"POST"}); }catch(e){}
+  localStorage.removeItem("token"); location.replace("/login");
+});
+
+/* ===== Language dropdown (SVG click fixed) ===== */
+(function(){
+  const FLAG_SVG = {
+    vn: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g fill-rule="nonzero"><circle cx="256" cy="256" r="256" fill="#da251d"/><path d="M252.3 294.6l51.2 37.2-19.6-60.3 51.3-37.2h-63.4l-19.6-60.3-19.6 60.3H169.3l51.3 37.2-19.6 60.3z" fill="#ff0"/></g></svg>',
+    en: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g fill-rule="nonzero"><path fill="#B22234" d="M0 0h512v512H0z"/><path stroke="#fff" stroke-width="40" d="M0 58h512M0 130h512M0 202h512M0 274h512M0 346h512M0 418h512"/><rect width="232" height="232" fill="#3C3B6E"/><g fill="#fff"><g id="s"><g id="t"><path d="M19 19l9 28-23-17h28l-23 17z"/></g><use href="#t" x="46"/><use href="#t" x="92"/><use href="#t" x="138"/><use href="#t" x="184"/></g><use href="#s" y="46"/><use href="#s" y="92"/><use href="#s" y="138"/></g></g></svg>'
+  };
+  const key='pref_lang';
+  const t=document.getElementById('lang-toggle');
+  const m=document.getElementById('lang-menu');
+  function setLang(l){ localStorage.setItem(key,l); if(t) t.innerHTML = FLAG_SVG[l]||FLAG_SVG.vn; }
+  t?.addEventListener('click',(e)=>{ e.stopPropagation(); m?.classList.toggle('show'); });
+  m?.addEventListener('click',(e)=>{ const b=e.target.closest('button[data-lang]'); if(!b) return; setLang(b.getAttribute('data-lang')); m.classList.remove('show'); });
+  document.addEventListener('click', e=>{ if(!e.target.closest('.header-controls')) m?.classList.remove('show'); });
+  setLang(localStorage.getItem(key)||'vn');
+})();
+
+/* ===== Chiến lược vốn: inputs động + preview ===== */
+const dyn = document.getElementById('dyn-params');
+const preview = document.getElementById('seq-preview');
+
+function numInput(id,label,def,step='0.01',min='0'){
+  return `
+    <div class="col">
+      <label for="${id}">${label}</label>
+      <input id="${id}" type="number" step="${step}" min="${min}" value="${def}">
+    </div>`;
+}
+function textareaInput(id,label,def){
+  return `
+    <div class="col">
+      <label for="${id}">${label}</label>
+      <input id="${id}" type="text" value="${def}" placeholder="VD: 1-2-4-8-17-35">
+      <div class="hint">Dùng dấu gạch nối “-” để phân tách các bước.</div>
+    </div>`;
+}
+function victorBlock(prefix, name, def){
+  return `
+    <div class="col">
+      <label>${name}</label>
+      <input id="${prefix}" type="text" value="${def}" placeholder="VD: 1-1-1-1-1-1">
+    </div>`;
+}
+
+function renderParams(){
+  const s = document.getElementById('#cap-strategy') ? document.getElementById('#cap-strategy').value : document.getElementById('cap-strategy').value;
+  let html = '<div class="row">';
+  switch(s){
+    case 'martingale':
+      html += textareaInput('seq','Chuỗi Martingale', '1-2-4-8-17-35');
+      html += numInput('lossStep','Bội số thua (Step Multiplier)', '1.5', '0.01','1');
+      html += '</div><div class="row">';
+      html += numInput('paroliSteps','Số bước Paroli (không dùng ở đây)', '0','1','0');
+      html += numInput('recovery','% hồi lỗ (Loss-Recovery)', '0','1','0');
+      break;
+    case 'paroli':
+      html += textareaInput('seq','Chuỗi Paroli', '1-2-3-5-8-13');
+      html += numInput('paroliSteps','Tối đa bước tăng liên tiếp', '3','1','1');
+      html += numInput('recovery','% hạ mức sau thua', '100','1','0');
+      break;
+    case 'dalembert':
+      html += numInput('dalUnit','Đơn vị (D’Alembert/Oscar)', '1','1','1');
+      html += numInput('dalPct','% vốn (Percent/Kelly nếu cần)', '0','0.1','0');
+      html += numInput('dalPayout','Tỷ lệ payout (Kelly)', '1.8','0.01','1.1');
+      break;
+    case 'oscars':
+      html += numInput('dalUnit','Đơn vị (D’Alembert/Oscar)', '1','1','1');
+      html += numInput('targetProfit','Mục tiêu phiên (Oscar’s Grind)', '1','0.01','0');
+      html += numInput('maxSteps','Giới hạn bước', '12','1','1');
+      break;
+    case 'fibo':
+      html += textareaInput('seq','Chuỗi Fibonacci', '1-1-2-3-5-8-13');
+      html += numInput('recovery','% hồi lỗ (tuỳ chọn)', '50','1','0');
+      html += numInput('maxSteps','Giới hạn bước', '12','1','1');
+      break;
+    case 'kelly':
+      html += numInput('kellyPct','% vốn (Percent/Kelly)', '2','0.1','0');
+      html += numInput('kellyPayout','Tỷ lệ payout (Kelly)', '1.8','0.01','1.1');
+      html += numInput('kellyCap','Giới hạn % tối đa', '5','0.1','0');
+      break;
+    case 'victor2':
+      html += victorBlock('v2row1','Cài đặt hàng 1','1-1-1-1-1-1');
+      html += victorBlock('v2row2','Cài đặt hàng 2','1.95-1.95-1.95-1.95');
+      html += victorBlock('v2row3','Cài đặt hàng 3','3.8-3.8-3.8-3.8');
+      html += victorBlock('v2row4','Cài đặt hàng 4','7.47-7.47-7.47-7.47');
+      break;
+    case 'victor3':
+      html += victorBlock('v3row1','Cài đặt hàng 1','1-1-1-1-1-1-1-1');
+      html += victorBlock('v3row2','Cài đặt hàng 2','1.9-1.9-1.9-1.9');
+      html += victorBlock('v3row3','Cài đặt hàng 3','3.6-3.6-3.6-3.6');
+      html += victorBlock('v3row4','Cài đặt hàng 4','7.0-7.0-7.0-7.0');
+      break;
+    case 'victor4':
+      html += victorBlock('v4row1','Cài đặt hàng 1','1-1-1-1-1-1-1-1-1-1-1-1-1-1');
+      html += victorBlock('v4row2','Cài đặt hàng 2','1.95-1.95-1.95-1.95-1.95-1.95');
+      html += victorBlock('v4row3','Cài đặt hàng 3','3.8-3.8-3.8-3.8-3.8-3.8');
+      html += victorBlock('v4row4','Cài đặt hàng 4','7.47-7.47-7.47-7.47-7.47-7.47');
+      break;
+    case 'custom':
+      html += textareaInput('seq','Chuỗi tuỳ chỉnh', '1-2-4-8');
+      html += numInput('maxSteps','Giới hạn bước', '12','1','1');
+      html += numInput('recovery','% hồi lỗ (tuỳ chọn)', '0','1','0');
+      break;
+  }
+  html += '</div>';
+  dyn.innerHTML = html;
+  buildPreview();
+}
+
+function parseSeq(val){
+  return String(val||'')
+    .split(/[\s,;-]+/).filter(Boolean)
+    .map(x=>Number(x)).filter(x=>isFinite(x)&&x>0);
+}
+function buildPreview(){
+  preview.innerHTML='';
+  const strategy = document.getElementById('cap-strategy').value;
+  let seq=[];
+
+  if(['martingale','paroli','fibo','custom'].includes(strategy)){
+    seq = parseSeq(document.getElementById('seq')?.value||'');
+  } else if(strategy.startsWith('victor')){
+    const pick = id => parseSeq(document.getElementById(id)?.value||'');
+    if(strategy==='victor2') seq=[...pick('v2row1'),...pick('v2row2'),...pick('v2row3'),...pick('v2row4')];
+    if(strategy==='victor3') seq=[...pick('v3row1'),...pick('v3row2'),...pick('v3row3'),...pick('v3row4')];
+    if(strategy==='victor4') seq=[...pick('v4row1'),...pick('v4row2'),...pick('v4row3'),...pick('v4row4')];
+  } else if(strategy==='dalembert'){
+    const u = Number(document.getElementById('dalUnit')?.value||1);
+    seq = Array.from({length:12},(_,i)=>Math.max(1, u + i));
+  } else if(strategy==='oscars'){
+    const u = Number(document.getElementById('dalUnit')?.value||1);
+    seq = Array.from({length:12},()=>u);
+  } else if(strategy==='kelly'){
+    const pct = Number(document.getElementById('kellyPct')?.value||2);
+    seq = Array.from({length:12},()=>pct/100);
+  }
+
+  if(seq.length===0){ preview.innerHTML='<span class="small">Chưa có chuỗi.</span>'; return; }
+  const frag=document.createDocumentFragment();
+  seq.slice(0,12).forEach(v=>{
+    const sp=document.createElement('span');
+    sp.className='pill';
+    sp.textContent = (typeof v==='number' && v<1) ? (v*100).toFixed(2)+'%' : String(v);
+    frag.appendChild(sp);
+  });
+  preview.appendChild(frag);
+}
+
+document.getElementById('cap-strategy').addEventListener('change', renderParams);
+document.getElementById('cap-method').addEventListener('change', renderParams);
+dyn.addEventListener('input', (e)=>{ if(e.target.matches('input')) buildPreview(); });
+renderParams();
+
+/* ===== Save / List packages (localStorage) ===== */
+const KEY='bo_invest_pkgs_v3';
+
+function readPkgs(){ try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch{ return []; } }
+function writePkgs(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
+function uid(){ return 'pkg_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+
+function currentConfig(){
+  const cap = document.getElementById('cap-strategy').value;
+  const cfg = {
+    id:null,
+    account:document.getElementById('acc-type').value,
+    entryMult:Number(document.getElementById('entry-mult').value||1),
+    signal:document.getElementById('signal').value,
+    fixed:Number(document.getElementById('fixed-amt').value||0),
+
+    target:Number(document.getElementById('target').value||0),
+    dailySL:Number(document.getElementById('daily-sl').value||0),
+    minRatio:Number(document.getElementById('min-ratio').value||0),
+    maxTrades:Number(document.getElementById('max-trades').value||0),
+    tp:Number(document.getElementById('tp').value||0),
+    sl:Number(document.getElementById('sl').value||0),
+    aiModel:document.getElementById('ai-model').value,
+
+    method:document.getElementById('cap-method').value,
+    capStrategy:cap,
+    params:{}
+  };
+
+  const gv = id => Number(document.getElementById(id)?.value||0);
+  const gs = id => document.getElementById(id)?.value||'';
+
+  if(['martingale','paroli','fibo','custom'].includes(cap)) cfg.params.seq = parseSeq(gs('seq'));
+  if(cap==='martingale'){ cfg.params.lossStep=gv('lossStep'); cfg.params.recovery=gv('recovery'); }
+  if(cap==='paroli'){ cfg.params.paroliSteps=gv('paroliSteps'); cfg.params.recovery=gv('recovery'); }
+  if(cap==='dalembert'){ cfg.params.unit=gv('dalUnit'); cfg.params.percent=gv('dalPct'); cfg.params.payout=gv('dalPayout'); }
+  if(cap==='oscars'){ cfg.params.unit=gv('dalUnit'); cfg.params.targetProfit=gv('targetProfit'); cfg.params.maxSteps=gv('maxSteps'); }
+  if(cap==='fibo'){ cfg.params.recovery=gv('recovery'); cfg.params.maxSteps=gv('maxSteps'); }
+  if(cap==='kelly'){ cfg.params.percent=gv('kellyPct'); cfg.params.payout=gv('kellyPayout'); cfg.params.cap=gv('kellyCap'); }
+  if(cap.startsWith('victor')){
+    const pick = (id)=>parseSeq(document.getElementById(id)?.value||'');
+    if(cap==='victor2') cfg.params.rows=[pick('v2row1'),pick('v2row2'),pick('v2row3'),pick('v2row4')];
+    if(cap==='victor3') cfg.params.rows=[pick('v3row1'),pick('v3row2'),pick('v3row3'),pick('v3row4')];
+    if(cap==='victor4') cfg.params.rows=[pick('v4row1'),pick('v4row2'),pick('v4row3'),pick('v4row4')];
+  }
+  return cfg;
+}
+
+let editingId=null;
+
+function resetForm(){
+  editingId=null;
+  document.getElementById('acc-type').value='demo';
+  document.getElementById('entry-mult').value='1';
+  document.getElementById('signal').value='ai';
+  document.getElementById('fixed-amt').value='1';
+  document.getElementById('target').value='50';
+  document.getElementById('daily-sl').value='50';
+  document.getElementById('min-ratio').value='70';
+  document.getElementById('max-trades').value='12';
+  document.getElementById('tp').value='40';
+  document.getElementById('sl').value='40';
+  document.getElementById('ai-model').value='agent5';
+  document.getElementById('cap-method').value='single';
+  document.getElementById('cap-strategy').value='martingale';
+  renderParams();
+  showMsg('');
+}
+document.getElementById('btn-reset').onclick=resetForm;
+
+function renderList(){
+  const box=document.getElementById('pkg-list');
+  const arr=readPkgs();
+  if(arr.length===0){ box.innerHTML='<div class="small">Chưa có gói nào.</div>'; return; }
+  box.innerHTML='';
+  arr.forEach(p=>{
+    const item=document.createElement('div');
+    item.style.border='1px solid #1d334f';
+    item.style.borderRadius='12px';
+    item.style.padding='12px';
+    item.style.marginTop='10px';
+    item.innerHTML=`
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+        <div>
+          <div style="font-weight:900">${p.name||'(Không tên)'}</div>
+          <div style="margin:8px 0">
+            <div class="stats-row">
+              <div class="stat-item">
+                <div class="stat-label">PNL</div>
+                <div class="stat-value ${p.pnl >= 0 ? 'profit' : 'loss'}">${p.pnl >= 0 ? '+' : ''}${(p.pnl || 0).toFixed(2)}$</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Khối lượng</div>
+                <div class="stat-value">${p.volume || 0}</div>
+              </div>
+              <div class="stat-item"> 
+                <div class="stat-label">Win Rate</div>
+                <div class="stat-value">${p.winRate || '0%'}</div>
+              </div>
+            </div>
+          </div>
+          <div class="small">Chiến lược: <b>${p.capStrategy}</b> • Phương pháp: ${p.method} • Tín hiệu: ${p.signal.toUpperCase()}</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-flat" data-act="run" data-id="${p.id}">Bắt đầu</button>
+          <button class="btn-flat" data-act="edit" data-id="${p.id}">Sửa</button>
+          <button class="btn-danger" data-act="del" data-id="${p.id}">Xóa</button>
+        </div>
+      </div>`;
+    box.appendChild(item);
+  });
+}
+
+document.getElementById('pkg-list').addEventListener('click', async (e)=>{
+  const btn = e.target.closest('[data-act]');
+  if(!btn) return;
+  const id = btn.getAttribute('data-id');
+  let arr=readPkgs();
+  const idx=arr.findIndex(x=>x.id===id);
+  if(idx<0) return;
+
+  if(btn.dataset.act==='del'){
+    if(confirm('Xóa gói này?')){ arr.splice(idx,1); writePkgs(arr); renderList(); }
+  }else if(btn.dataset.act==='edit'){
+    const p=arr[idx];
+    editingId=p.id;
+    // đổ dữ liệu vào form
+    document.getElementById('acc-type').value=p.account;
+    document.getElementById('entry-mult').value=p.entryMult;
+    document.getElementById('signal').value=p.signal;
+    document.getElementById('fixed-amt').value=p.fixed;
+    document.getElementById('target').value=p.target;
+    document.getElementById('daily-sl').value=p.dailySL;
+    document.getElementById('min-ratio').value=p.minRatio;
+    document.getElementById('max-trades').value=p.maxTrades;
+    document.getElementById('tp').value=p.tp;
+    document.getElementById('sl').value=p.sl;
+    document.getElementById('ai-model').value=p.aiModel;
+    document.getElementById('cap-method').value=p.method;
+    document.getElementById('cap-strategy').value=p.capStrategy;
+    renderParams();
+    // params
+    if(p.capStrategy==='kelly'){
+      document.getElementById('kellyPct').value=p.params.percent||2;
+      document.getElementById('kellyPayout').value=p.params.payout||1.8;
+      document.getElementById('kellyCap').value=p.params.cap||5;
+    }else if(['martingale','paroli','fibo','custom'].includes(p.capStrategy)){
+      document.getElementById('seq').value=(p.params.seq||[]).join('-');
+      if(p.params.lossStep!=null) document.getElementById('lossStep').value=p.params.lossStep;
+      if(p.params.paroliSteps!=null) document.getElementById('paroliSteps').value=p.params.paroliSteps;
+      if(p.params.recovery!=null) document.getElementById('recovery').value=p.params.recovery;
+      if(p.params.maxSteps!=null) document.getElementById('maxSteps').value=p.params.maxSteps;
+    }else if(p.capStrategy==='dalembert'){
+      document.getElementById('dalUnit').value=p.params.unit||1;
+      document.getElementById('dalPct').value=p.params.percent||0;
+      document.getElementById('dalPayout').value=p.params.payout||1.8;
+    }else if(p.capStrategy==='oscars'){
+      document.getElementById('dalUnit').value=p.params.unit||1;
+      document.getElementById('targetProfit').value=p.params.targetProfit||1;
+      document.getElementById('maxSteps').value=p.params.maxSteps||12;
+    }else if(p.capStrategy.startsWith('victor') && p.params.rows){
+      const put=(id,arr)=>{ const el=document.getElementById(id); if(el) el.value=(arr||[]).join('-'); }
+      if(p.capStrategy==='victor2'){ put('v2row1',p.params.rows[0]); put('v2row2',p.params.rows[1]); put('v2row3',p.params.rows[2]); put('v2row4',p.params.rows[3]); }
+      if(p.capStrategy==='victor3'){ put('v3row1',p.params.rows[0]); put('v3row2',p.params.rows[1]); put('v3row3',p.params.rows[2]); put('v3row4',p.params.rows[3]); }
+      if(p.capStrategy==='victor4'){ put('v4row1',p.params.rows[0]); put('v4row2',p.params.rows[1]); put('v4row3',p.params.rows[2]); put('v4row4',p.params.rows[3]); }
+    }
+    buildPreview();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }else if(btn.dataset.act==='run'){
+    const payload = arr[idx].payload || makePayload(arr[idx]);
+    try{
+      const r=await fetch('/api/investment/start',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+        body:JSON.stringify(payload)
+      });
+      const j=await r.json().catch(()=>({}));
+      alert(j?.ok?'Đã kích hoạt gói.':'Không thể kích hoạt gói.');
+    }catch{ alert('Lỗi kết nối máy chủ'); }
+  }
+});
+
+function makePayload(cfg){
+  return {
+    account: cfg.account,
+    entry_mult: cfg.entryMult,
+    signal: cfg.signal,
+    fixed_amount: cfg.fixed,
+    target_day: cfg.target,
+    daily_loss_limit: cfg.dailySL,
+    min_ratio: cfg.minRatio,
+    max_trades: cfg.maxTrades,
+    take_profit: cfg.tp,
+    stop_loss: cfg.sl,
+    ai_model: cfg.aiModel,
+    method: cfg.method,
+    capital_strategy: cfg.capStrategy,
+    params: cfg.params
+  };
+}
+
+document.getElementById('btn-save').onclick = ()=>{
+  const cfg = currentConfig();
+  if(cfg.fixed<=0 && ['martingale','paroli','fibo','custom','victor2','victor3','victor4'].includes(cfg.capStrategy)){
+    showMsg('Số tiền cố định phải > 0 cho chiến lược theo chuỗi.'); return;
+  }
+  if(['martingale','paroli','fibo','custom'].includes(cfg.capStrategy) && (!cfg.params.seq || cfg.params.seq.length===0)){
+    showMsg('Chuỗi lệnh không hợp lệ.'); return;
+  }
+  if(cfg.capStrategy==='kelly' && cfg.params.percent<=0){ showMsg('% Kelly phải > 0'); return; }
+
+  const name = prompt('Đặt tên gói:', 'Gói AI '+new Date().toLocaleString('vi-VN'));
+  if(name===null) return;
+  cfg.name = name.trim() || 'Gói AI';
+  cfg.id = editingId || uid();
+  cfg.payload = makePayload(cfg);
+
+  let arr=readPkgs();
+  const i=arr.findIndex(x=>x.id===cfg.id);
+  if(i>=0) arr[i]=cfg; else arr.push(cfg);
+  writePkgs(arr);
+  renderList();
+  editingId=cfg.id;
+  showMsg('Đã lưu gói.');
+};
+
+/* ===== Init ===== */
+renderList();
+</script>
+</body>
+</html>

@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no" />
+<title>Thành viên VIP — BO Helper</title>
+<style>
+:root{
+  --bg:#0b1320; --bg2:#0a1223;
+  --card:#0f1f35; --card2:#102645;
+  --accent:#2dd4bf; --brand:#34c759; --sell:#ff4d4f;
+  --muted:#9aa3ab; --text:#eaf2ff; --text-soft:#cfe0ff;
+  --line:#183558; --radius:16px;
+  --vip-gold:#ffd700; --vip-orange:#ff8c42;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:linear-gradient(180deg,var(--bg),var(--bg2));
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Background with bg2.png */
+body::before{
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/media/bg2.png') center/cover no-repeat;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hidden{display:none!important}
+.noscroll{overflow:hidden}
+
+/* ===== HEADER ===== */
+.main-header{
+  position:fixed; top:0; left:0; right:0; height:56px;
+  background:var(--bg); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 14px; z-index:110;
+}
+.icon-btn{
+  position:relative; width:34px; height:34px; border:none;
+  background:#1a2a40; border-radius:10px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 0;
+}
+.icon-btn span{display:block; width:20px; height:2px; background:#fff; border-radius:2px}
+.header-user-info{display:flex; align-items:center; gap:12px}
+.balance-item{display:flex; align-items:center; gap:8px; background:var(--card); padding:8px 12px; border-radius:12px; border:1px solid var(--line)}
+.wallet-icon{width:20px; height:20px; color:var(--muted)}
+.balance-value{font-size:14px; font-weight:700; color:var(--text)}
+.balance-label{font-size:11px; color:var(--muted); margin-top:-2px}
+.user-profile{display:flex; align-items:center; position:relative; cursor:pointer}
+.user-menu{position:absolute;top:calc(100% + 8px);right:0;background:#223149;border:1px solid #2a3f5e;border-radius:12px;padding:12px;min-width:220px;box-shadow:0 10px 25px rgba(0,0,0,.35);display:none;z-index:220}
+.user-menu.show{display:block}
+.user-menu-header{padding:8px 0;border-bottom:1px solid #2a3f5e;margin-bottom:8px}
+.user-menu-name{font-size:14px;font-weight:700;color:#e8f2ff;margin-bottom:4px}
+.user-menu-email{font-size:12px;color:#9aa3ab}
+.user-menu-item{display:block;width:100%;text-align:left;background:transparent;border:none;color:#e8f2ff;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s ease}
+.user-menu-item:hover{background:#2a3b54}
+.user-menu-item.logout{color:#ff6b6b;margin-top:4px;border-top:1px solid #2a3f5e;padding-top:12px}
+.header-controls{display:flex; align-items:center; gap:8px; position:relative}
+.lang-flag{width:22px; height:22px; display:inline-block; cursor:pointer}
+.lang-menu{position:absolute; top:34px; right:0; background:#223149; border:1px solid #2a3f5e; border-radius:12px; padding:8px 10px; box-shadow:0 10px 25px rgba(0,0,0,.35); display:none; z-index:200}
+.lang-menu.show{display:block}
+.lang-menu button{display:block; width:160px; text-align:left; background:transparent; border:none; color:#e8f2ff; padding:8px 10px; border-radius:8px; cursor:pointer}
+.lang-menu button:hover{background:#2a3b54}
+.avatar{
+  width:32px; height:32px; border-radius:50%; overflow:hidden;
+  border: 2px solid var(--line); box-sizing: border-box;
+}
+.avatar img{width:100%; height:100%; object-fit:cover}
+
+/* ===== Sidebar ===== */
+.backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:140}
+.backdrop.show{opacity:1; pointer-events:auto}
+.sidebar{
+  position:fixed; top:0; left:0; height:100dvh; width:84vw; max-width:320px;
+  background:#0f1b2b; border-right:1px solid #173152;
+  transform:translateX(-100%); transition:transform .25s ease;
+  z-index:145; display:flex; flex-direction:column; gap:12px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 14px 18px;
+}
+.sidebar.show{transform:translateX(0)}
+.menu-item{
+  display:flex; align-items:center; gap:8px;
+  width:100%; padding:12px 14px; border-radius:14px;
+  background:#213247; color:#e8f2ff; font-weight:800; text-decoration:none; border:1px solid #2a3f5e
+}
+.menu-item.active{outline:2px solid rgba(45,212,191,.35)}
+.menu-logout{background:#2a3b54; color:#ffd9d9}
+
+/* Sidebar footer: linked account */
+.sidebar-footer{
+  margin-top:auto;
+  background:#1b2a40;
+  border:1px solid #2a3f5e;
+  border-radius:12px;
+  padding:8px;
+  color:#cfe0ff;
+  text-align:center;
+  max-width:180px;
+  margin-left:auto;
+  margin-right:auto;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.sidebar-footer .footer-title{font-weight:700;font-size:10px;margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase;color:#9fb7d9}
+.sidebar-footer .footer-logo{display:flex;align-items:center;justify-content:center}
+.sidebar-footer .footer-logo img{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(45,212,191,.5))}
+
+/* ===== VIP Page Layout ===== */
+.wrap{
+  max-width:1200px; margin:12px auto 84px; padding:56px 14px 0; position:relative; z-index:1;
+  display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;
+}
+
+/* Left Column - VIP Info */
+.vip-info-section{
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border:1px solid var(--line); border-radius:20px; padding:24px;
+  position:relative; overflow:hidden;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 35px rgba(0,0,0,.4);
+}
+
+.vip-info-title{
+  font-size:20px; font-weight:900; margin-bottom:20px; color:var(--text);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.vip-level-card{
+  background:linear-gradient(135deg,#1a2a40,#2a3f5e);
+  border:2px solid var(--vip-gold); border-radius:16px; padding:20px; margin-bottom:20px;
+  text-align:center; position:relative; overflow:hidden;
+  box-shadow: 0 8px 25px rgba(255,215,0,0.2);
+}
+
+.vip-level-label{
+  font-size:14px; color:var(--muted); margin-bottom:8px; font-weight:600;
+}
+
+.vip-level-number{
+  font-size:48px; font-weight:900; color:var(--vip-gold);
+  text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  animation: vipGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes vipGlow {
+  0% { filter: brightness(1) drop-shadow(0 0 5px rgba(255,215,0,0.3)); }
+  100% { filter: brightness(1.2) drop-shadow(0 0 15px rgba(255,215,0,0.6)); }
+}
+
+.next-level-title{
+  font-size:16px; font-weight:800; margin-bottom:16px; color:var(--text);
+}
+
+.requirement-cards{
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+}
+
+.requirement-card{
+  background:linear-gradient(135deg,#0d2749,#1a365d);
+  border:1px solid var(--line); border-radius:12px; padding:16px;
+  text-align:center; position:relative; overflow:hidden; min-height:110px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.requirement-card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.3);
+  border-color: rgba(45, 212, 191, 0.3);
+}
+
+.requirement-label{
+  font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:600;
+}
+
+.requirement-value{
+  font-size:18px; font-weight:900; color:var(--text);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.requirement-progress{
+  font-size:14px; margin-top:4px; font-weight:700;
+  color:var(--accent);
+}
+
+/* Right Column - Main Content */
+.main-content{
+  display:flex; flex-direction:column; gap:20px;
+}
+
+.content-tabs{
+  display:flex; gap:8px; margin-bottom:20px;
+}
+
+.tab-button{
+  padding:12px 24px; border:none; background:#213247; color:#e8f2ff;
+  border-radius:12px; font-weight:700; cursor:pointer; transition:all 0.3s ease;
+  border:1px solid #2a3f5e; flex:1; text-align:center;
+}
+
+.tab-button.active{
+  background:linear-gradient(135deg,var(--accent),var(--brand));
+  color:#fff; box-shadow: 0 4px 15px rgba(45,212,191,0.3);
+}
+
+.tab-content{
+  display:none;
+}
+
+.tab-content.active{
+  display:block;
+}
+
+/* Commission Section */
+.commission-section{
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border:1px solid var(--line); border-radius:20px; padding:24px;
+  position:relative; overflow:hidden;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 35px rgba(0,0,0,.4);
+}
+
+.commission-title{
+  font-size:24px; font-weight:900; margin-bottom:12px; color:var(--text);
+}
+
+.commission-description{
+  font-size:14px; color:var(--muted); margin-bottom:24px; line-height:1.5;
+}
+
+.date-range{
+  display:flex; gap:12px; align-items:center; margin-bottom:24px; flex-wrap:wrap;
+}
+
+.date-input{
+  padding:12px 16px; border:1px solid #1d334f; border-radius:12px;
+  background:#091a2d; color:#fff; font-size:14px; outline:none;
+  transition:all 0.3s ease;
+}
+
+.date-input:focus{
+  border-color:var(--accent); box-shadow:0 0 0 3px rgba(45,212,191,0.1);
+}
+
+.search-button{
+  padding:12px 24px; border:none; background:linear-gradient(135deg,#ff4d4f,#ef4444);
+  color:#fff; border-radius:12px; font-weight:700; cursor:pointer;
+  transition:all 0.3s ease; box-shadow:0 4px 15px rgba(255,77,79,0.3);
+}
+
+.search-button:hover{
+  transform:translateY(-2px); box-shadow:0 6px 20px rgba(255,77,79,0.4);
+}
+
+.no-data-section{
+  text-align:center; padding:40px 20px;
+}
+
+.no-data-illustration{
+  width:200px; height:200px; margin:0 auto 20px;
+  background:linear-gradient(135deg,#2a3f5e,#1a2a40);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+}
+
+.no-data-text{
+  font-size:18px; font-weight:700; color:var(--text);
+}
+
+/* Responsive */
+@media (max-width:768px){
+  .wrap{grid-template-columns:1fr; gap:16px}
+  .requirement-cards{grid-template-columns:1fr}
+  .date-range{flex-direction:column; align-items:stretch}
+  .search-button{width:100%}
+}
+
+@media (max-width:420px){
+  .balance-label{display:none}
+  .balance-value{font-size:13px}
+  .header-user-info{gap:8px}
+  .vip-level-number{font-size:36px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="main-header">
+  <button class="icon-btn" id="btn-menu" aria-label="Mở menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="header-user-info">
+    <div class="header-controls" aria-label="Chọn ngôn ngữ">
+      <img class="lang-flag" id="lang-toggle" src="https://fintech3.net/img/flag/vn.png" alt="Lang">
+      <div class="lang-menu" id="lang-menu">
+        <button type="button" data-lang="en">Tiếng Anh</button>
+        <button type="button" data-lang="vn">Tiếng Việt</button>
+      </div>
+    </div>
+    <div class="balance-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" class="wallet-icon"><path d="M22 12v5c0 3-2 5-5 5H7c-3 0-5-2-5-5v-5c0-2.72 1.64-4.62 4.19-4.94.26-.04.53-.06.81-.06h10c.26 0 .51.01 .75 .05C20.33 7.35 22 9.26 22 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.751 7.05c-.24-.04-.49-.05-.75-.05h-10c-.28 0-.55 .02-.81 .06.14-.28.34-.54.58-.78l3.25-3.26a3.525 3.525 0 0 1 4.96 0l1.75 1.77c.64.63.98 1.43 1.02 2.26ZM22 12.5h-3c-1.1 0-2 .9-2 2s.9 2 2 2h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><div class="balance-value">$<span id="real-balance">0</span></div><div class="balance-label">TK Thực</div></div>
+    </div>
+    <div class="balance-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" class="wallet-icon"><path d="M22 12v5c0 3-2 5-5 5H7c-3 0-5-2-5-5v-5c0-2.72 1.64-4.62 4.19-4.94.26-.04.53-.06.81-.06h10c.26 0 .51 .01 .75 .05C20.33 7.35 22 9.26 22 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.751 7.05c-.24-.04-.49-.05-.75-.05h-10c-.28 0-.55 .02-.81 .06.14-.28.34-.54.58-.78l3.25-3.26a3.525 3.525 0 0 1 4.96 0l1.75 1.77c.64.63.98 1.43 1.02 2.26ZM22 12.5h-3c-1.1 0-2 .9-2 2s.9 2 2 2h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><div class="balance-value">$<span id="demo-balance">0</span></div><div class="balance-label">TK Demo</div></div>
+    </div>
+    <div class="user-profile balance-item" id="user-profile">
+      <div class="avatar"><img src="https://img.favpng.com/17/24/10/computer-icons-user-profile-male-avatar-png-favpng-jhVtWQQbMdbcNCahLZztCF5wk.jpg" alt="Avatar"></div>
+      <div class="user-menu" id="user-menu">
+        <div class="user-menu-header">
+          <div class="user-menu-name" id="user-name">Loading...</div>
+          <div class="user-menu-email" id="user-email">Loading...</div>
+        </div>
+        <button type="button" class="user-menu-item logout" id="btn-logout-menu">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Sidebar + backdrop -->
+<div id="backdrop" class="backdrop" aria-hidden="true"></div>
+<nav class="sidebar" id="sidebar" aria-label="Menu">
+  <a href="/" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg> Bảng Điều Khiển
+  </a>
+  <a href="/aidudoan" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+    </svg> AI Dự Đoán
+  </a>
+  <a href="/copytrade" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    </svg> Copytrade
+  </a>
+  <a href="/investment" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M21 11v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-8m18 0-9-9-9 9m18 0H3m15-3V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4"/>
+    </svg> Gói đầu tư
+  </a>
+  <a href="/top-expert" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg> Top Chuyên Gia
+  </a>
+  <a href="/vip" class="menu-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right:8px">
+      <path d="M12 2l-3 7h-7l5.5 4-2.5 7 7-4 7 4-2.5-7 5.5-4h-7z"/>
+    </svg> Thành viên VIP
+  </a>
+  
+  <div class="sidebar-footer">
+    <div class="footer-title">Tài khoản bạn liên kết</div>
+    <div class="footer-logo">
+      <img src="https://fintech3.net/static/media/logo.8490529fc9b2fd89a0ad.png" alt="Linked account logo">
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <!-- Left Column - VIP Info -->
+  <div class="vip-info-section">
+    <div class="vip-info-title">Thông tin VIP</div>
+    
+    <!-- VIP Level Card -->
+    <div class="vip-level-card">
+      <div class="vip-level-label">Cấp bậc VIP của bạn</div>
+      <div class="vip-level-number" id="vip-level">0</div>
+    </div>
+    
+    <!-- Next Level Requirements -->
+    <div class="next-level-title">Điều kiện cấp bậc tiếp theo</div>
+    <div class="requirement-cards">
+      <div class="requirement-card">
+        <div class="requirement-label">F1 VIP</div>
+        <div class="requirement-value" id="f1-vip-count">0/12</div>
+        <div class="requirement-progress" id="f1-vip-progress">0%</div>
+      </div>
+      <div class="requirement-card">
+        <div class="requirement-label">KLGD F1 (Tuần này)</div>
+        <div class="requirement-value" id="f1-volume-week">$0/$0</div>
+        <div class="requirement-progress" id="f1-volume-progress">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column - Main Content -->
+  <div class="main-content">
+    <!-- Content Tabs -->
+    <div class="content-tabs">
+      <button class="tab-button active" data-tab="overview">Tổng quan</button>
+      <button class="tab-button" data-tab="members">Danh sách thành viên</button>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-content active" id="overview">
+      <div class="commission-section">
+        <div class="commission-title">Hoa hồng giao dịch</div>
+        <div class="commission-description">
+          Bạn sẽ nhận được hoa hồng từ tất cả khối lượng giao dịch ngay sau khi tuyến dưới của bạn giao dịch.
+        </div>
+        
+        <div class="date-range">
+          <input type="date" class="date-input" id="start-date" value="2024-01-07">
+          <input type="date" class="date-input" id="end-date" value="2024-07-23">
+          <button class="search-button" id="search-btn">Tìm kiếm</button>
+        </div>
+        
+        <div class="no-data-section" id="commission-data">
+          <div class="no-data-illustration">
+            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="40" fill="#2dd4bf" opacity="0.2"/>
+              <path d="M30 40h40v20H30z" fill="#2dd4bf" opacity="0.6"/>
+              <path d="M35 45h30v10H35z" fill="#2dd4bf"/>
+              <circle cx="50" cy="25" r="8" fill="#ff8c42"/>
+            </svg>
+          </div>
+          <div class="no-data-text">Không có dữ liệu ở đây!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members Tab -->
+    <div class="tab-content" id="members">
+      <div class="commission-section">
+        <div class="commission-title">Danh sách thành viên</div>
+        <div class="commission-description">
+          Quản lý và theo dõi các thành viên trong hệ thống của bạn.
+        </div>
+        
+        <div class="no-data-section" id="members-data">
+          <div class="no-data-illustration">
+            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="30" cy="40" r="15" fill="#2dd4bf" opacity="0.6"/>
+              <circle cx="70" cy="40" r="15" fill="#2dd4bf" opacity="0.6"/>
+              <circle cx="50" cy="70" r="20" fill="#2dd4bf" opacity="0.3"/>
+              <path d="M25 55c0-10 5-15 15-15s15 5 15 15" stroke="#2dd4bf" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <div class="no-data-text">Chưa có thành viên nào!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Auth ===== */
+const params = new URLSearchParams(window.location.search);
+const token = localStorage.getItem('token') || params.get('token');
+if(!token){ location.replace('/login'); } else { localStorage.setItem('token', token); }
+
+function redirectToLogin(){
+  localStorage.removeItem('token'); sessionStorage.clear();
+  location.replace('/login');
+}
+
+async function authFetch(url,opt={}){
+  const r = await fetch(url,opt);
+  if(r.status===401){ redirectToLogin(); throw new Error('401'); }
+  return r;
+}
+
+let currentUserData = null;
+
+/* ===== Profile & VIP Data ===== */
+async function loadProfile(){
+  try{
+    const r = await authFetch('/api/user/getProfile',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token}
+    });
+    const js = await r.json();
+    if(js.status && js.data){
+      currentUserData = js.data;
+       
+      // Update header balances
+      document.getElementById('real-balance').textContent = (js.data.balance||0).toLocaleString();
+      document.getElementById('demo-balance').textContent = (js.data.demoBalance||0).toLocaleString();
+
+      const nameEl = document.getElementById('user-name');
+      const emailEl = document.getElementById('user-email');
+      if(nameEl) nameEl.textContent = js.data.userName || 'User';
+      if(emailEl) emailEl.textContent = js.data.email || '';
+       
+      // Update VIP information
+      updateVIPInfo(js.data);
+    }
+  }catch(e){ if(e.message!=='401') console.error('Profile error', e); }
+}
+
+function updateVIPInfo(data){
+  // VIP Level
+  const vipLevel = data.level || 0;
+  document.getElementById('vip-level').textContent = vipLevel;
+  
+  // F1 VIP Count
+  const f1VipCount = data.totalMemberVipF1 || 0;
+  const f1VipRequired = 12; // Assuming 12 is required for next level
+  const f1VipProgress = Math.min((f1VipCount / f1VipRequired) * 100, 100);
+  
+  document.getElementById('f1-vip-count').textContent = `${f1VipCount}/${f1VipRequired}`;
+  document.getElementById('f1-vip-progress').textContent = `${f1VipProgress.toFixed(1)}%`;
+  
+  // F1 Volume This Week
+  const f1VolumeToday = data.volumeF1Today || 0;
+  const f1VolumeRequired = Number(data.volumeF1TargetWeek || 0); // default 0 if backend not provided
+  const f1VolumeProgress = f1VolumeRequired > 0 ? Math.min((f1VolumeToday / f1VolumeRequired) * 100, 100) : 0;
+  
+  const moneyVN = (n)=> `${Number(n||0).toLocaleString('vi-VN')} đô`;
+  document.getElementById('f1-volume-week').textContent = `${moneyVN(f1VolumeToday)} / ${moneyVN(f1VolumeRequired)}`;
+  document.getElementById('f1-volume-progress').textContent = `${f1VolumeProgress.toFixed(1)}%`;
+}
+
+/* ===== Tab Functionality ===== */
+function initTabs(){
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetTab = button.getAttribute('data-tab');
+      
+      // Remove active class from all buttons and contents
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+      
+      // Add active class to clicked button and corresponding content
+      button.classList.add('active');
+      document.getElementById(targetTab).classList.add('active');
+    });
+  });
+}
+
+/* ===== Search Functionality ===== */
+function initSearch(){
+  const searchBtn = document.getElementById('search-btn');
+  const startDate = document.getElementById('start-date');
+  const endDate = document.getElementById('end-date');
+  
+  searchBtn.addEventListener('click', async () => {
+    const start = startDate.value;
+    const end = endDate.value;
+    
+    if(!start || !end){
+      alert('Vui lòng chọn cả ngày bắt đầu và ngày kết thúc');
+      return;
+    }
+    
+    try{
+      // Here you would typically fetch commission data from API
+      // For now, we'll just show a loading state
+      searchBtn.textContent = 'Đang tìm kiếm...';
+      searchBtn.disabled = true;
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Show no data message (as per the image)
+      document.getElementById('commission-data').innerHTML = `
+        <div class="no-data-illustration">
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="40" fill="#2dd4bf" opacity="0.2"/>
+            <path d="M30 40h40v20H30z" fill="#2dd4bf" opacity="0.6"/>
+            <path d="M35 45h30v10H35z" fill="#2dd4bf"/>
+            <circle cx="50" cy="25" r="8" fill="#ff8c42"/>
+          </svg>
+        </div>
+        <div class="no-data-text">Không có dữ liệu ở đây!</div>
+      `;
+      
+    }catch(e){
+      console.error('Search error:', e);
+      alert('Có lỗi xảy ra khi tìm kiếm dữ liệu');
+    }finally{
+      searchBtn.textContent = 'Tìm kiếm';
+      searchBtn.disabled = false;
+    }
+  });
+}
+
+/* ===== Menu ===== */
+const body = document.body;
+const sidebar = document.getElementById('sidebar');
+const backdrop = document.getElementById('backdrop');
+const btnMenu = document.getElementById('btn-menu');
+
+function openMenu() {
+  sidebar.classList.add('show');
+  backdrop.classList.add('show'); 
+  body.classList.add('noscroll');
+  btnMenu.setAttribute('aria-expanded', 'true');
+  backdrop.setAttribute('aria-hidden', 'false');
+}
+
+function closeMenu() {
+  sidebar.classList.remove('show');
+  backdrop.classList.remove('show');
+  body.classList.remove('noscroll');
+  btnMenu.setAttribute('aria-expanded', 'false');
+  backdrop.setAttribute('aria-hidden', 'true');
+}
+
+btnMenu.addEventListener('click', () => {
+  if (sidebar.classList.contains('show')) {
+    closeMenu();
+  } else {
+    openMenu();
+  }
+});
+
+backdrop.addEventListener('click', closeMenu);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMenu();
+});
+
+const userProfileEl = document.getElementById('user-profile');
+const userMenuEl = document.getElementById('user-menu');
+if(userProfileEl){
+  userProfileEl.addEventListener('click', (event)=>{
+    event.stopPropagation();
+    userMenuEl?.classList.toggle('show');
+  });
+}
+document.addEventListener('click', (event)=>{
+  if(!event.target.closest('#user-profile')) userMenuEl?.classList.remove('show');
+});
+
+const btnLogoutMenu = document.getElementById('btn-logout-menu');
+if(btnLogoutMenu){
+  btnLogoutMenu.addEventListener('click', async ()=>{
+    try{ await fetch('/api/logout',{method:'POST'});}catch(e){}
+    redirectToLogin();
+  });
+}
+
+/* ===== Initialize ===== */
+(async function init(){ 
+  await loadProfile(); 
+  initTabs();
+  initSearch();
+  setInterval(loadProfile, 30000); 
+})();
+
+/* ===== Language dropdown ===== */
+const langKey = 'pref_lang';
+const elLangToggle = document.getElementById('lang-toggle');
+const elLangMenu = document.getElementById('lang-menu');
+const FLAG_SVG = {
+  vn: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g fill-rule="nonzero"><path fill="#4D4D4D" d="M256-.001c70.684 0 134.69 28.664 181.013 74.988C483.337 121.31 512.001 185.316 512.001 256c0 70.684-28.664 134.69-74.988 181.013C390.69 483.337 326.684 512.001 256 512.001c-70.677 0-134.69-28.664-181.013-74.988C28.663 390.69-.001 326.676-.001 256c0-70.684 28.664-134.69 74.988-181.013C121.31 28.663 185.316-.001 256-.001z"/><path fill="#fff" d="M256.001 19.596c65.278 0 124.383 26.466 167.163 69.243 42.776 42.779 69.243 101.884 69.243 167.162s-26.467 124.383-69.246 167.16c-42.777 42.779-101.882 69.246-167.16 69.246-65.278 0-124.383-26.467-167.162-69.243-42.777-42.78-69.243-101.885-69.243-167.163S46.062 131.618 88.839 88.839c42.779-42.777 101.884-69.243 167.162-69.243z"/><path fill="#DA251D" d="M256.001 39.594c119.518 0 216.408 96.886 216.408 216.407 0 119.518-96.89 216.408-216.408 216.408-119.521 0-216.407-96.89-216.407-216.408 0-119.521 96.886-216.407 216.407-216.407z"/><path fill="#ff0" d="M252.273 294.553l51.249 37.218-19.567-60.264 51.271-37.235h-63.365l-19.588-60.337-19.589 60.337H169.32l51.271 37.235-19.567 60.264z"/></g></svg>`,
+  en: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g fill-rule="nonzero"><path fill="#999" d="M256 0c70.68 0 134.69 28.66 181.01 74.99C483.34 121.31 512 185.32 512 256c0 70.68-28.66 134.69-74.99 181.01C390.69 483.34 326.68 512 256 512c-70.68 0-134.69-28.66-181.01-74.99C28.66 390.69 0 326.68 0 256c0-70.68 28.66-134.69 74.99-181.01C121.31 28.66 185.32 0 256 0z"/><path fill="#fff" d="M256 19.48c65.29 0 124.46 26.48 167.25 69.27l1.09 1.18c42.14 42.72 68.17 101.37 68.17 166.06 0 65.31-26.49 124.46-69.28 167.25l-1.19 1.09c-42.72 42.16-101.4 68.19-166.04 68.19-65.23 0-124.38-26.51-167.18-69.33-42.84-42.74-69.34-101.89-69.34-167.2 0-65.31 26.48-124.45 69.27-167.24C131.54 45.96 190.69 19.48 256 19.48z"/><path fill="#B22234" d="M256 39.59c39.48 0 76.49 10.58 108.37 29.04H147.63C179.51 50.17 216.52 39.59 256 39.59zm155.84 66.28c9.16 9.48 17.42 19.82 24.72 30.85H75.43c7.29-11.09 15.59-21.46 24.72-30.85h311.69zm44.41 67.97c4.1 9.97 7.46 20.28 10.04 30.92H45.71c2.61-10.62 6.03-20.9 10.04-30.92h400.5zm15.68 68.08c.3 4.68.47 9.37.47 14.07 0 5.67-.22 11.3-.65 16.85H40.25c-.42-5.59-.65-11.26-.65-16.85 0-4.73.17-9.42.47-14.07h431.86zm-6.32 68.06a212.979 212.979 0 0 1-10.52 30.94H56.91c-4.25-10.02-7.83-20.39-10.52-30.94h419.22zm-30.9 68.06c-7.63 11.14-16.25 21.56-25.78 31.07H103.07c-9.5-9.51-18.15-19.93-25.78-31.07h357.42zm-75.27 68.08c-30.86 16.77-66.16 26.29-103.44 26.29-37.47 0-72.72-9.53-103.44-26.29h206.88z"/><path fill="#3C3B6E" d="M268.16 39.94v234.41H40.39c-.53-6.07-.79-12.16-.79-18.36 0-119.51 96.88-216.4 216.4-216.4 4.08 0 8.14.13 12.16.35z"/><path fill="#fff" d="M240.1 261.63h25.89l-20.97 15.25 8.03-24.66zm0-47.66h25.89l-20.97 15.22 8.03-24.62zm0-47.69h25.89l-20.97 15.26 8.03-24.65zm0-47.66h25.89l-20.97 15.23 8.03-24.62zm0-47.67h25.89l-20.97 15.24 8.03-24.63z"/></g></svg>`
+};
+function setLang(l){ localStorage.setItem(langKey,l); elLangToggle.outerHTML = `<span id="lang-toggle" class="lang-flag">${FLAG_SVG[l]||FLAG_SVG.vn}</span>`; document.getElementById('lang-toggle').onclick = ()=>{ elLangMenu.classList.toggle('show'); }; }
+elLangToggle.addEventListener('click', ()=>{ elLangMenu.classList.toggle('show'); });
+elLangMenu.addEventListener('click', (e)=>{ const btn=e.target.closest('button[data-lang]'); if(!btn) return; setLang(btn.getAttribute('data-lang')); elLangMenu.classList.remove('show'); });
+document.addEventListener('click', (e)=>{ if(!e.target.closest('.header-controls')) elLangMenu.classList.remove('show'); });
+setLang(localStorage.getItem(langKey)||'vn');
+</script>
+</body>
+</html>
